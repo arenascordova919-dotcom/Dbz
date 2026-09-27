@@ -1,12 +1,12 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Dragon Ball Bedrock - Resource Pack",
-    "description": "Resources for the Dragon Ball Bedrock add-on.",
+    "name": "Dragon Breakers | RP",
+    "description": "Dragon Breakers v0.5 resources",
     "uuid": "6d3a7c99-4d9c-47b6-c8e5-bf3a4e0e7244",
     "version": [
       0,
-      3,
+      5,
       0
     ],
     "min_engine_version": [
@@ -21,7 +21,7 @@
       "uuid": "7e4b8daa-5e0d-48c7-d9f6-c01b51f8355",
       "version": [
         0,
-        3,
+        5,
         0
       ]
     }
@@ -31,7 +31,7 @@
       "uuid": "3f0d1e4e-7e8b-4a3f-9d0a-1c8b2e6f4011",
       "version": [
         0,
-        3,
+        5,
         0
       ]
     }
