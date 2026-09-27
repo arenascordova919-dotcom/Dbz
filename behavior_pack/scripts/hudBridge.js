@@ -1,6 +1,6 @@
 import { system, world } from "@minecraft/server";
 import { CONFIG } from "./config.js";
-import { getLoadout, getNumber, getString } from "./playerData.js";
+import { getLoadout, getNumber, getPowerLevel, getString } from "./playerData.js";
 
 const cache = new Map();
 
@@ -48,7 +48,7 @@ export function startHudBridge() {
       writeIfChanged(player, "hud_selected", selected, state);
 
       const hudText =
-        `§6§lDRAGON BREAKERS §r§7• §fLV §e${level} §7• §f${race}\n` +
+        `§6§lDRAGON BREAKERS §r§7• §fLV §e${level} §7• §fPL §6${getPowerLevel(player)} §7• §f${race}\n` +
         `§cHP §r${bar(hp.current, hp.max, "§c")} §f${hp.current}/${hp.max}\n` +
         `§bKI §r${bar(ki, CONFIG.maxKi, "§b")} §f${ki}/${CONFIG.maxKi}\n` +
         `§eSTM §r${bar(stamina, CONFIG.maxStamina, "§e")} §f${stamina}/${CONFIG.maxStamina}\n` +
