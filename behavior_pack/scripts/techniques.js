@@ -1,5 +1,5 @@
 import { system } from "@minecraft/server";
-import { clampResource, getNumber } from "./playerData.js";
+import { clampResource, getNumber, getString } from "./playerData.js";
 import { CONFIG } from "./config.js";
 
 const cooldown = new Map();
@@ -60,7 +60,7 @@ export function castKiBlast(player) {
 
 export function castSelectedTechnique(player) {
   const selected = Math.max(1, Math.min(4, Math.floor(getNumber(player, "selectedSlot"))));
-  const skill = player.getDynamicProperty(`dbz:skill${selected}`);
+  const skill = getString(player, `skill${selected}`);
   if (skill === "Kamehameha") return castKamehameha(player);
   if (skill === "Ki Blast") return castKiBlast(player);
   if (skill === "Spirit Bomb") {
