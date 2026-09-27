@@ -10,33 +10,90 @@ function safeParticle(dimension, id, location) {
   try { dimension.spawnParticle(id, location); } catch {}
 }
 
-function aimedTarget(player, maxDistance = 40, threshold = 0.965) {
-  const eye = player.getHeadLocation();
-  const dir = player.getViewDirection();
-  let best, bestDistance = maxDistance + 1;
-
-  for (const entity of player.dimension.getEntities({ location: eye, maxDistance })) {
-    if (entity.id === player.id || entity.typeId === "minecraft:item") continue;
-    const dx = entity.location.x - eye.x;
-    const dy = entity.location.y + 0.8 - eye.y;
-    const dz = entity.location.z - eye.z;
-    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (distance <= 0.01) continue;
-    const dot = (dx * dir.x + dy * dir.y + dz * dir.z) / distance;
-    if (dot >= threshold && distance < bestDistance) {
-      best = entity;
-      bestDistance = distance;
-    }
-  }
-  return best;
-}
-
 function point(origin, direction, distance) {
   return {
     x: origin.x + direction.x * distance,
     y: origin.y + direction.y * distance,
     z: origin.z + direction.z * distance
   };
+}
+
+function isSolidImpact(dimension, location) {
+  try {
+    const block = dimension.getBlock({
+      x: Math.floor(location.x),
+      y: Math.floor(location.y),
+      z: Math.floor(location.z)
+    });
+    if (!block) return false;
+    if (block.isAir) return false;
+    return block.typeId !== "minecraft:water" && block.typeId !== "minecraft:lava";
+  } catch {
+    return false;
+  }
+}
+
+function terrainRadius(player, technique) {
+  const mode = getString(player, "terrainMode");
+  if (mode === "Off") return 0;
+
+  const low = {
+    kiBlast: 1.15,
+    kamehameha: 1.9,
+    spiritBomb: 3.6
+  };
+  const full = {
+    kiBlast: 2.0,
+    kamehameha: 3.25,
+    spiritBomb: 6.0
+  };
+
+  return (mode === "Full" ? full : low)[technique] ?? 0;
+}
+
+function terrainImpact(player, location, technique) {
+  const radius = terrainRadius(player, technique);
+  if (radius <= 0) return;
+
+  try {
+    player.dimension.createExplosion(location, radius, {
+      breaksBlocks: true,
+      causesFire: false,
+      allowUnderwater: true,
+      source: player
+    });
+  } catch (error) {
+    console.warn("[Dragon Breakers] Terrain impact failed: " + error);
+  }
+}
+
+function entitiesNear(player, location, radius) {
+  try {
+    return player.dimension.getEntities({ location, maxDistance: radius })
+      .filter(entity =>
+        entity.id !== player.id &&
+        entity.typeId !== "minecraft:item" &&
+        entity.typeId !== "minecraft:xp_orb"
+      );
+  } catch {
+    return [];
+  }
+}
+
+function impactBurst(dimension, location, particleId, radius = 0.45) {
+  const offsets = [
+    [0, 0, 0],
+    [radius, 0, 0], [-radius, 0, 0],
+    [0, radius, 0], [0, -radius, 0],
+    [0, 0, radius], [0, 0, -radius]
+  ];
+  for (const [x, y, z] of offsets) {
+    safeParticle(dimension, particleId, {
+      x: location.x + x,
+      y: location.y + y,
+      z: location.z + z
+    });
+  }
 }
 
 export function castKamehameha(player) {
@@ -50,56 +107,73 @@ export function castKamehameha(player) {
   }
 
   clampResource(player, "ki", CONFIG.maxKi, ki - cost);
-  setCooldown(player, "kame", 70);
+  setCooldown(player, "kame", 75);
 
-  // Short charge phase at the player's hands.
-  for (let tick = 0; tick < 7; tick++) {
+  // Short hand-charge phase.
+  for (let tick = 0; tick < 9; tick++) {
     system.runTimeout(() => {
       try {
         const head = player.getHeadLocation();
         const dir = player.getViewDirection();
-        const charge = point(head, dir, 1.15);
-        charge.y -= 0.28;
+        const charge = point(head, dir, 1.1);
+        charge.y -= 0.30;
         safeParticle(player.dimension, "dbz:kamehameha_charge", charge);
       } catch {}
     }, tick);
   }
 
-  // Beam release.
   system.runTimeout(() => {
     try {
       const head = player.getHeadLocation();
       const dir = player.getViewDirection();
-      const target = aimedTarget(player, 48, 0.93);
+      const dimension = player.dimension;
+      const damaged = new Set();
+      let impact = point(head, dir, 34);
 
-      for (let pass = 0; pass < 3; pass++) {
+      for (let distance = 1.4; distance <= 34; distance += 1.15) {
+        const location = point(head, dir, distance);
+        safeParticle(dimension, "dbz:kamehameha_beam", location);
+
+        for (const entity of entitiesNear(player, location, 1.35)) {
+          if (damaged.has(entity.id)) continue;
+          damaged.add(entity.id);
+          try {
+            entity.applyDamage(CONFIG.kamehamehaDamage, { damagingEntity: player });
+            entity.applyImpulse({
+              x: dir.x * 1.35,
+              y: Math.max(0.18, dir.y * 0.45),
+              z: dir.z * 1.35
+            });
+          } catch {}
+        }
+
+        if (isSolidImpact(dimension, location)) {
+          impact = location;
+          break;
+        }
+      }
+
+      // Reinforce the beam for a few frames so it reads as a beam, not a dotted line.
+      for (let pass = 1; pass <= 2; pass++) {
         system.runTimeout(() => {
           try {
-            for (let distance = 1.5; distance <= 34; distance += 1.6) {
-              safeParticle(player.dimension, "dbz:kamehameha_beam", point(head, dir, distance));
+            for (let distance = 1.4; distance <= 26; distance += 1.35) {
+              safeParticle(dimension, "dbz:kamehameha_beam", point(head, dir, distance));
             }
           } catch {}
         }, pass * 2);
       }
 
-      if (target) {
-        system.runTimeout(() => {
-          try {
-            target.applyDamage(18, { damagingEntity: player });
-            target.applyImpulse({
-              x: dir.x * 1.25,
-              y: Math.max(0.2, dir.y * 0.4),
-              z: dir.z * 1.25
-            });
-          } catch {}
-        }, 3);
-      }
-    } catch {}
-  }, 7);
+      impactBurst(dimension, impact, "dbz:ki_blast_impact", 0.55);
+      terrainImpact(player, impact, "kamehameha");
+    } catch (error) {
+      console.warn("[Dragon Breakers] Kamehameha failed: " + error);
+    }
+  }, 9);
 }
 
 export function castKiBlast(player) {
-  const cost = 10;
+  const cost = CONFIG.kiBlastCost;
   if (!ready(player, "blast")) return;
 
   const ki = getNumber(player, "ki");
@@ -109,7 +183,7 @@ export function castKiBlast(player) {
   }
 
   clampResource(player, "ki", CONFIG.maxKi, ki - cost);
-  setCooldown(player, "blast", 12);
+  setCooldown(player, "blast", CONFIG.kiBlastCooldownTicks);
 
   let origin;
   let direction;
@@ -122,7 +196,6 @@ export function castKiBlast(player) {
     return;
   }
 
-  // Muzzle flash just in front of the player.
   const muzzle = point(origin, direction, 1.15);
   muzzle.y -= 0.12;
   safeParticle(dimension, "dbz:ki_blast_glow", muzzle);
@@ -130,62 +203,41 @@ export function castKiBlast(player) {
 
   let finished = false;
 
-  for (let step = 1; step <= 16; step++) {
+  for (let step = 1; step <= 17; step++) {
     system.runTimeout(() => {
       if (finished) return;
 
       try {
-        const distance = 1.4 + step * 1.85;
+        const distance = 1.35 + step * 1.8;
         const location = point(origin, direction, distance);
 
-        // Bright center + larger energy halo.
         safeParticle(dimension, "dbz:ki_blast_glow", location);
         safeParticle(dimension, "dbz:ki_blast_core", location);
 
-        // Afterimage behind the projectile creates readable motion on mobile.
         if (step > 1) {
-          const trailA = point(origin, direction, distance - 0.75);
-          const trailB = point(origin, direction, distance - 1.35);
-          safeParticle(dimension, "dbz:ki_blast_trail", trailA);
-          safeParticle(dimension, "dbz:ki_blast_trail", trailB);
+          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 0.7));
+          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 1.25));
         }
 
-        const hit = dimension.getEntities({ location, maxDistance: 1.20 })
-          .find(entity =>
-            entity.id !== player.id &&
-            entity.typeId !== "minecraft:item" &&
-            entity.typeId !== "minecraft:xp_orb"
-          );
+        const hit = entitiesNear(player, location, 1.15)[0];
+        const hitBlock = isSolidImpact(dimension, location);
 
-        if (hit) {
+        if (hit || hitBlock || step === 17) {
           finished = true;
 
-          try {
-            hit.applyDamage(8, { damagingEntity: player });
-            hit.applyImpulse({
-              x: direction.x * 0.75,
-              y: 0.16,
-              z: direction.z * 0.75
-            });
-          } catch {}
-
-          // Compact impact burst around the contact point.
-          const burstOffsets = [
-            [0, 0, 0],
-            [0.28, 0, 0],
-            [-0.28, 0, 0],
-            [0, 0.28, 0],
-            [0, -0.20, 0],
-            [0, 0, 0.28],
-            [0, 0, -0.28]
-          ];
-          for (const [x, y, z] of burstOffsets) {
-            safeParticle(dimension, "dbz:ki_blast_impact", {
-              x: location.x + x,
-              y: location.y + y,
-              z: location.z + z
-            });
+          if (hit) {
+            try {
+              hit.applyDamage(CONFIG.kiBlastDamage, { damagingEntity: player });
+              hit.applyImpulse({
+                x: direction.x * 0.78,
+                y: 0.17,
+                z: direction.z * 0.78
+              });
+            } catch {}
           }
+
+          impactBurst(dimension, location, "dbz:ki_blast_impact", 0.34);
+          terrainImpact(player, location, "kiBlast");
         }
       } catch {
         finished = true;
@@ -194,17 +246,95 @@ export function castKiBlast(player) {
   }
 }
 
+export function castSpiritBomb(player) {
+  const cost = 80;
+  if (!ready(player, "spirit")) return;
+
+  const ki = getNumber(player, "ki");
+  if (ki < cost) {
+    player.sendMessage("§cYou need at least 80 Ki for Spirit Bomb.");
+    return;
+  }
+
+  clampResource(player, "ki", CONFIG.maxKi, ki - cost);
+  setCooldown(player, "spirit", 220);
+
+  // Build a large orb above the player for ~1.5 seconds.
+  for (let tick = 0; tick < 30; tick += 2) {
+    system.runTimeout(() => {
+      try {
+        const base = player.location;
+        safeParticle(player.dimension, "dbz:spirit_bomb_orb", {
+          x: base.x,
+          y: base.y + 3.0,
+          z: base.z
+        });
+      } catch {}
+    }, tick);
+  }
+
+  system.runTimeout(() => {
+    let origin;
+    let direction;
+    let dimension;
+
+    try {
+      origin = player.getHeadLocation();
+      origin.y += 1.5;
+      direction = player.getViewDirection();
+      dimension = player.dimension;
+    } catch {
+      return;
+    }
+
+    let finished = false;
+
+    const detonate = (location) => {
+      if (finished) return;
+      finished = true;
+
+      impactBurst(dimension, location, "dbz:spirit_bomb_impact", 1.2);
+
+      for (const entity of entitiesNear(player, location, 5.5)) {
+        try {
+          entity.applyDamage(CONFIG.spiritBombDamage, { damagingEntity: player });
+          const dx = entity.location.x - location.x;
+          const dz = entity.location.z - location.z;
+          const mag = Math.max(0.01, Math.sqrt(dx * dx + dz * dz));
+          entity.applyImpulse({ x: dx / mag * 1.1, y: 0.55, z: dz / mag * 1.1 });
+        } catch {}
+      }
+
+      terrainImpact(player, location, "spiritBomb");
+    };
+
+    for (let step = 1; step <= 14; step++) {
+      system.runTimeout(() => {
+        if (finished) return;
+
+        try {
+          const location = point(origin, direction, step * 2.15);
+          safeParticle(dimension, "dbz:spirit_bomb_orb", location);
+
+          const hitEntity = entitiesNear(player, location, 1.8).length > 0;
+          if (hitEntity || isSolidImpact(dimension, location) || step === 14) {
+            detonate(location);
+          }
+        } catch {
+          finished = true;
+        }
+      }, step * 2);
+    }
+  }, 30);
+}
+
 export function castSelectedTechnique(player) {
   const selected = Math.max(1, Math.min(4, Math.floor(getNumber(player, "selectedSlot"))));
   const skill = getString(player, `skill${selected}`);
 
   if (skill === "Kamehameha") return castKamehameha(player);
   if (skill === "Ki Blast") return castKiBlast(player);
-
-  if (skill === "Spirit Bomb") {
-    player.sendMessage("§6Spirit Bomb is the next technique being upgraded.");
-    return;
-  }
+  if (skill === "Spirit Bomb") return castSpiritBomb(player);
 
   player.sendMessage("§7No technique equipped in this slot.");
 }
