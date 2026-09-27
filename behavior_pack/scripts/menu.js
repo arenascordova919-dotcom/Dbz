@@ -15,7 +15,7 @@ const customizationOpen = new Set();
 const appearanceOpen = new Set();
 const FOCUSES = ["Balanced", "Power", "Speed", "Ki"];
 const AURA_STYLES = ["Blue", "Gold", "Violet", "Green"];
-const BODY_TYPES = ["Type 1", "Type 2", "Type 3"];
+const BODY_TYPES = ["Normal", "Muscular", "Slim"];
 const SKIN_TONES = ["Default", "Light", "Medium", "Dark"];
 const HAIR_STYLES = ["Style 1", "Style 2", "Style 3", "Style 4"];
 const HAIR_COLORS = ["Black", "Brown", "Gold", "Blue", "White"];
@@ -132,7 +132,7 @@ export async function ensureAppearanceSetup(player) {
   let hairColor = getString(player, "hairColor");
   let eyeStyle = getString(player, "eyeStyle");
 
-  if (!BODY_TYPES.includes(bodyType)) bodyType = "Type 1";
+  if (!BODY_TYPES.includes(bodyType)) bodyType = bodyType === "Type 2" ? "Muscular" : bodyType === "Type 3" ? "Slim" : "Normal";
   if (!SKIN_TONES.includes(skinTone)) skinTone = "Default";
   if (!HAIR_STYLES.includes(hairStyle)) hairStyle = "Style 1";
   if (!HAIR_COLORS.includes(hairColor)) hairColor = "Black";
@@ -148,7 +148,7 @@ export async function ensureAppearanceSetup(player) {
           `§fRace: §e${race}\n` +
           `§fBody: §6${bodyType}   §fSkin: §6${skinTone}\n` +
           `§fHair: §6${hairStyle} / ${hairColor}   §fEyes: §6${eyeStyle}\n\n` +
-          "§7These appearance choices are saved to your fighter profile and will drive future race models/transformations."
+          "§7These choices now drive your live Dragon Breakers fighter model. Saiyans gain a tail; Namekians and Arcosians use race-specific geometry."
         )
         .button(`§6Body Type • ${bodyType}`, "textures/items/race_saiyan_icon")
         .button(`§6Skin Tone • ${skinTone}`, "textures/items/race_earthling_icon")
