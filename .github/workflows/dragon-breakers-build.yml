@@ -49,7 +49,7 @@ jobs:
               except Exception as exc:
                   raise SystemExit(f"Malformed PNG: {png_path}: {exc}")
 
-          # v0.6.4 must not contain the old fake race armor/item system at all.
+          # v0.6.5 must not contain the old fake race armor/item system at all.
           legacy_items = list(pathlib.Path("behavior_pack/items").glob("race_appearance_*.json"))
           if legacy_items:
               raise SystemExit(f"Legacy race appearance items still exist: {legacy_items}")
@@ -75,7 +75,7 @@ jobs:
 
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
-          if bp["header"]["version"] != [0, 6, 4]:
+          if bp["header"]["version"] != [0, 6, 5]:
               raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
 
           for manifest in (bp, rp):
@@ -161,7 +161,7 @@ jobs:
                       if not candidate.exists():
                           raise SystemExit(f"UI {ui_path} references missing texture: {candidate}")
 
-          # Required v0.6.4 system assets.
+          # Required v0.6.5 system assets.
           required = [
               "behavior_pack/items/technique_launcher.json",
               "behavior_pack/scripts/appearance.js",
@@ -187,11 +187,20 @@ jobs:
           ]
           for required_path in required:
               if not pathlib.Path(required_path).exists():
-                  raise SystemExit(f"Missing v0.6.4 required file: {required_path}")
+                  raise SystemExit(f"Missing v0.6.5 required file: {required_path}")
 
           menu_js = pathlib.Path("behavior_pack/scripts/menu.js").read_text(encoding="utf-8")
+          player_data_js = pathlib.Path("behavior_pack/scripts/playerData.js").read_text(encoding="utf-8")
+
+          if "Race selected:" in menu_js or "Fighter setup complete!" in menu_js:
+              raise SystemExit("Setup confirmation chat spam returned")
+          if "ensureAppearanceSetup" not in menu_js or "appearanceRevision" not in player_data_js:
+              raise SystemExit("Appearance setup flow missing")
+          if "Aura Style •" not in menu_js:
+              raise SystemExit("Aura Style control missing from Settings")
+
           if '.button("§fCharacter"' in menu_js or "characterMenu(" in menu_js:
-              raise SystemExit("Character menu entry/function returned in v0.6.4")
+              raise SystemExit("Character menu entry/function returned in v0.6.5")
           if "ensureRaceCustomization" not in menu_js:
               raise SystemExit("Race customization flow missing")
 
@@ -215,7 +224,7 @@ jobs:
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.6.4_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.6.5_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -234,7 +243,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.6.4_TEST
-          path: Dragon_Breakers_v0.6.4_TEST.mcaddon
+          name: Dragon_Breakers_v0.6.5_TEST
+          path: Dragon_Breakers_v0.6.5_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
