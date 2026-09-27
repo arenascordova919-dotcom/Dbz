@@ -2,11 +2,19 @@
   "namespace": "dbz_appearance_form",
   "appearance_form@server_form.long_form": {
     "size": [
-      320,
-      205
+      330,
+      215
     ],
     "$child_control": "dbz_appearance_form.appearance_panel",
-    "$custom_background": "custom_server_form.background"
+    "$custom_background": "custom_server_form.background",
+    "$title_size": [
+      0,
+      0
+    ],
+    "$title_max_size": [
+      0,
+      0
+    ]
   },
   "appearance_panel": {
     "type": "panel",
@@ -27,35 +35,15 @@
         }
       },
       {
-        "player_renderer": {
-          "type": "custom",
-          "renderer": "live_player_renderer",
-          "size": [
-            92,
-            126
-          ],
-          "offset": [
-            18,
-            14
-          ],
-          "anchor_from": "left_middle",
-          "anchor_to": "left_middle",
-          "layer": 2,
-          "property_bag": {
-            "#look_at_cursor": true
-          }
-        }
-      },
-      {
         "summary": {
           "type": "label",
           "size": [
             "48%",
-            "44%"
+            "32%"
           ],
           "offset": [
             -12,
-            27
+            28
           ],
           "anchor_from": "top_right",
           "anchor_to": "top_right",
