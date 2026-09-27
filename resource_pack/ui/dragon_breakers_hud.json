@@ -5,14 +5,19 @@
     "size": [ "100%", "100%" ],
     "controls": [
       {
-        "brand": {
-          "type": "label",
+        "status_panel": {
+          "type": "panel",
           "anchor_from": "top_left",
           "anchor_to": "top_left",
           "offset": [ 8, 8 ],
-          "text": "DRAGON BREAKERS",
-          "font_size": "small",
-          "color": [ 1.0, 0.78, 0.18 ]
+          "size": [ 180, 58 ],
+          "controls": [
+            { "background": { "type": "image", "texture": "textures/ui/Black", "size": [ "100%", "100%" ], "alpha": 0.72 } },
+            { "brand": { "type": "label", "offset": [ 7, 5 ], "text": "DRAGON BREAKERS", "font_size": "small", "color": [ 1.0, 0.78, 0.18 ] } },
+            { "hp": { "type": "label", "offset": [ 7, 20 ], "text": "HP", "font_size": "small", "color": [ 1.0, 0.3, 0.3 ] } },
+            { "ki": { "type": "label", "offset": [ 7, 33 ], "text": "KI", "font_size": "small", "color": [ 0.2, 0.75, 1.0 ] } },
+            { "stamina": { "type": "label", "offset": [ 7, 46 ], "text": "STM", "font_size": "small", "color": [ 1.0, 0.82, 0.2 ] } }
+          ]
         }
       }
     ]
