@@ -17,8 +17,8 @@
             8
           ],
           "size": [
-            44,
-            44
+            38,
+            38
           ],
           "controls": [
             {
@@ -54,13 +54,20 @@
                 "type": "custom",
                 "renderer": "hud_player_renderer",
                 "size": [
-                  36,
-                  36
+                  30,
+                  34
                 ],
-                "layer": 3
+                "layer": 3,
+                "anchor_from": "bottom_middle",
+                "anchor_to": "bottom_middle",
+                "offset": [
+                  0,
+                  1
+                ]
               }
             }
-          ]
+          ],
+          "clips_children": true
         }
       },
       {
@@ -71,11 +78,11 @@
           "anchor_to": "left_middle",
           "offset": [
             8,
-            18
+            10
           ],
           "size": [
-            138,
-            128
+            104,
+            88
           ],
           "controls": [
             {
@@ -83,14 +90,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  30
+                  22
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/Black",
-                      "alpha": 0.72,
+                      "alpha": 0.52,
                       "size": [
                         "100%",
                         "100%"
@@ -103,13 +110,13 @@
                       "texture": "textures/items/kamehameha",
                       "alpha": 1,
                       "size": [
-                        24,
-                        24
+                        18,
+                        18
                       ],
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        3,
+                        2,
                         0
                       ]
                     }
@@ -122,7 +129,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        32,
+                        24,
                         0
                       ],
                       "shadow": true
@@ -136,14 +143,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  30
+                  22
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/Black",
-                      "alpha": 0.72,
+                      "alpha": 0.52,
                       "size": [
                         "100%",
                         "100%"
@@ -156,13 +163,13 @@
                       "texture": "textures/items/ki_blast",
                       "alpha": 1,
                       "size": [
-                        24,
-                        24
+                        18,
+                        18
                       ],
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        3,
+                        2,
                         0
                       ]
                     }
@@ -175,7 +182,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        32,
+                        24,
                         0
                       ],
                       "shadow": true
@@ -189,14 +196,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  30
+                  22
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/Black",
-                      "alpha": 0.72,
+                      "alpha": 0.52,
                       "size": [
                         "100%",
                         "100%"
@@ -209,13 +216,13 @@
                       "texture": "textures/items/spirit_bomb",
                       "alpha": 1,
                       "size": [
-                        24,
-                        24
+                        18,
+                        18
                       ],
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        3,
+                        2,
                         0
                       ]
                     }
@@ -228,7 +235,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        32,
+                        24,
                         0
                       ],
                       "shadow": true
@@ -242,14 +249,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  30
+                  22
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/Black",
-                      "alpha": 0.72,
+                      "alpha": 0.52,
                       "size": [
                         "100%",
                         "100%"
@@ -264,7 +271,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        32,
+                        24,
                         0
                       ],
                       "shadow": true
