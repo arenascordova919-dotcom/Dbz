@@ -1,0 +1,16 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "dbz:technique_launcher"
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:display_name": {
+        "value": "Technique Launcher"
+      },
+      "minecraft:icon": "technique_launcher",
+      "minecraft:keep_on_death": {}
+    }
+  }
+}
