@@ -1,13 +1,17 @@
 # Dragon Ball Bedrock Mod
 
-A modular Dragon Ball-inspired Minecraft Bedrock add-on.
+A modular Dragon Ball-inspired Minecraft Bedrock add-on focused on mobile + PC Bedrock.
 
-## Current foundation
-- Behavior Pack and Resource Pack structure
-- Script API entry point
-- Player Ki resource with regeneration
-- Starter Ki Blast item
-- Server-side cooldown and combat handling
+## Build: Core v0.2.0
+- Synchronized Behavior Pack / Resource Pack versions
+- Modular Script API architecture
+- Persistent player data using dynamic properties
+- Level, XP, TP, race, form, mastery and six core stats
+- Derived Power Level
+- Ki + Stamina regeneration
+- Compact action-bar HUD
+- Ki Blast cost, cooldown, targeting, damage and knockback
+- Clean single script entry point
 
-## Roadmap
-Transformations, races, power levels, techniques, Dragon Balls, bosses, custom UI, and world content.
+## Next systems
+Character/race selection, custom menu UI, charging/aura, projectile visuals, techniques (including Kamehameha), transformations, flight, progression, custom HUD/UI, Dragon Balls and bosses.
