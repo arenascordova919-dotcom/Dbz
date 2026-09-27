@@ -1,12 +1,12 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Dragon Ball Bedrock - Behavior Pack",
-    "description": "Core gameplay systems for the Dragon Ball Bedrock add-on.",
+    "name": "Dragon Breakers | BP",
+    "description": "Dragon Breakers v0.5 gameplay foundation",
     "uuid": "3f0d1e4e-7e8b-4a3f-9d0a-1c8b2e6f4011",
     "version": [
       0,
-      3,
+      5,
       0
     ],
     "min_engine_version": [
@@ -21,7 +21,7 @@
       "uuid": "4b1e5a77-2b7a-45f4-a6c3-9e1d2f8c5022",
       "version": [
         0,
-        3,
+        5,
         0
       ]
     },
@@ -32,7 +32,7 @@
       "uuid": "5c2f6b88-3c8b-46a5-b7d4-af2e3e9d6133",
       "version": [
         0,
-        3,
+        5,
         0
       ]
     }
@@ -45,6 +45,14 @@
     {
       "module_name": "@minecraft/server-ui",
       "version": "2.0.0"
+    },
+    {
+      "uuid": "6d3a7c99-4d9c-47b6-c8e5-bf3a4e0e7244",
+      "version": [
+        0,
+        5,
+        0
+      ]
     }
   ]
 }
