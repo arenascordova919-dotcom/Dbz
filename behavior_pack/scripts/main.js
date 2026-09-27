@@ -2,7 +2,8 @@ import { HudElement, HudVisibility, ItemStack, system, world } from "@minecraft/
 import { initializePlayer } from "./playerData.js";
 import { startResourceRegeneration } from "./resources.js";
 import { registerCombat } from "./combat.js";
-import { openMainMenu } from "./menu.js";
+import { ensureCharacterCreation, openMainMenu } from "./menu.js";
+import { registerTechniqueControls } from "./controls.js";
 import { startHudBridge } from "./hudBridge.js";
 
 function ensureMenuSlot(player) {
@@ -49,6 +50,7 @@ function ensureMenuSlot(player) {
 function preparePlayer(player) {
   initializePlayer(player);
   ensureMenuSlot(player);
+  system.runTimeout(() => ensureCharacterCreation(player), 12);
   try {
     player.onScreenDisplay.setHudVisibility(HudVisibility.Hide, [HudElement.Health, HudElement.Hunger]);
   } catch (error) {
@@ -67,6 +69,7 @@ system.run(() => {
   startResourceRegeneration();
   startHudBridge();
   registerCombat();
+  registerTechniqueControls();
   system.runInterval(() => { for (const player of world.getAllPlayers()) ensureMenuSlot(player); }, 100);
-  console.warn("[Dragon Breakers] v0.5.1 loaded.");
+  console.warn("[Dragon Breakers] v0.5.2 loaded.");
 });
