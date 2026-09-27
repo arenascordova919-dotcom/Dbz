@@ -61,7 +61,7 @@ jobs:
 
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
-          if bp["header"]["version"] != [0, 6, 1]:
+          if bp["header"]["version"] != [0, 6, 2]:
               raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
 
           for manifest in (bp, rp):
@@ -116,10 +116,39 @@ jobs:
                   if not candidate.exists():
                       raise SystemExit(f"Particle {particle_path} references missing texture: {candidate}")
 
-          # Required v0.6.1 system assets.
+          # Reject the old full-body race armor geometry that caused broken character visuals.
+          for attachable_path in pathlib.Path("resource_pack/attachables").glob("race_appearance_*.json"):
+              data = json.load(open(attachable_path, encoding="utf-8"))
+              geometry = data.get("minecraft:attachable", {}).get("description", {}).get("geometry", {}).get("default", "")
+              if geometry == "geometry.player.armor1":
+                  raise SystemExit(f"Old full-body race geometry still present in {attachable_path}")
+
+          # Validate Dragon Breakers custom UI texture paths.
+          for ui_path in pathlib.Path("resource_pack/ui").glob("*.json"):
+              data = ui_path.read_text(encoding="utf-8")
+              for marker in [
+                  "textures/ui/dragon_breakers/db_button",
+                  "textures/ui/dragon_breakers/db_button_hover",
+                  "textures/ui/dragon_breakers/db_button_pressed",
+                  "textures/ui/dragon_breakers/db_panel",
+                  "textures/ui/dragon_breakers/db_hud_panel",
+                  "textures/ui/dragon_breakers/db_slot_panel",
+              ]:
+                  if marker in data:
+                      candidate = pathlib.Path("resource_pack") / (marker + ".png")
+                      if not candidate.exists():
+                          raise SystemExit(f"UI {ui_path} references missing texture: {candidate}")
+
+          # Required v0.6.2 system assets.
           required = [
               "behavior_pack/items/technique_launcher.json",
               "behavior_pack/scripts/appearance.js",
+              "behavior_pack/scripts/charging.js",
+              "resource_pack/particles/aura_body.particle.json",
+              "resource_pack/particles/aura_rise.particle.json",
+              "resource_pack/particles/aura_burst.particle.json",
+              "resource_pack/particles/spirit_bomb_orb.particle.json",
+              "resource_pack/particles/spirit_bomb_impact.particle.json",
               "resource_pack/attachables/technique_launcher.json",
               "resource_pack/models/entity/empty.geo.json",
               "resource_pack/textures/items/technique_launcher.png",
@@ -127,7 +156,7 @@ jobs:
           ]
           for required_path in required:
               if not pathlib.Path(required_path).exists():
-                  raise SystemExit(f"Missing v0.6.1 required file: {required_path}")
+                  raise SystemExit(f"Missing v0.6.2 required file: {required_path}")
 
           ui_defs = json.load(open("resource_pack/ui/_ui_defs.json", encoding="utf-8"))
           for entry in ui_defs.get("ui_defs", []):
@@ -149,7 +178,7 @@ jobs:
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.6.1_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.6.2_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -168,7 +197,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.6.1_TEST
-          path: Dragon_Breakers_v0.6.1_TEST.mcaddon
+          name: Dragon_Breakers_v0.6.2_TEST
+          path: Dragon_Breakers_v0.6.2_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
