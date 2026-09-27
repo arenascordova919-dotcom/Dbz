@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Dragon Ball Bedrock - Behavior Pack",
+    "description": "Core gameplay systems for the Dragon Ball Bedrock add-on.",
+    "uuid": "3f0d1e4e-7e8b-4a3f-9d0a-1c8b2e6f4011",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "4b1e5a77-2b7a-45f4-a6c3-9e1d2f8c5022",
+      "version": [0, 1, 0]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/main.js",
+      "uuid": "5c2f6b88-3c8b-46a5-b7d4-af2e3e9d6133",
+      "version": [0, 1, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.1.0"
+    }
+  ]
+}
