@@ -1,0 +1,71 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.dbz.player.body_type": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "scale": [
+            "q.property('dbz:body_type') == 1 ? 1.12 : q.property('dbz:body_type') == 2 ? 0.90 : 1.0",
+            "1.0",
+            "q.property('dbz:body_type') == 1 ? 1.08 : q.property('dbz:body_type') == 2 ? 0.92 : 1.0"
+          ]
+        },
+        "rightArm": {
+          "scale": [
+            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0",
+            "1.0",
+            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0"
+          ]
+        },
+        "leftArm": {
+          "scale": [
+            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0",
+            "1.0",
+            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0"
+          ]
+        }
+      }
+    },
+    "animation.dbz.player.tail_idle": {
+      "loop": true,
+      "bones": {
+        "tail1": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 110.0) * 10.0",
+            0
+          ]
+        },
+        "tail2": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 110.0 + 35.0) * 14.0",
+            0
+          ]
+        },
+        "tail3": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 110.0 + 70.0) * 18.0",
+            0
+          ]
+        },
+        "arco_tail1": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 95.0) * 8.0",
+            0
+          ]
+        },
+        "arco_tail2": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 95.0 + 45.0) * 12.0",
+            0
+          ]
+        }
+      }
+    }
+  }
+}
