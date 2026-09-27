@@ -1,5 +1,105 @@
 {
   "namespace": "server_form",
+  "third_party_server_screen@common.base_screen": {
+    "$screen_animations": [
+      "@server_form.screen_exit_animation_pop_wait"
+    ],
+    "$background_animations": [
+      "@server_form.screen_exit_animation_pop_wait"
+    ],
+    "$screen_content": "server_form.main_screen_content",
+    "force_render_below": true,
+    "low_frequency_rendering": true,
+    "render_only_when_topmost": false,
+    "render_game_behind": true,
+    "button_mappings": [
+      {
+        "from_button_id": "button.menu_cancel",
+        "to_button_id": "button.menu_exit",
+        "mapping_type": "global"
+      }
+    ]
+  },
+  "screen_exit_animation_pop_wait": {
+    "anim_type": "offset",
+    "easing": "linear",
+    "duration": 0.1,
+    "from": [
+      0,
+      0
+    ],
+    "to": [
+      0,
+      0
+    ],
+    "play_event": "screen.exit_pop",
+    "end_event": "screen.exit_end"
+  },
+  "main_screen_content": {
+    "type": "panel",
+    "size": [
+      "100%",
+      "100%"
+    ],
+    "controls": [
+      {
+        "server_form_factory": {
+          "type": "factory",
+          "control_ids": {
+            "long_form": "@server_form.select_long_form",
+            "custom_form": "@server_form.custom_form"
+          }
+        }
+      }
+    ]
+  },
+  "select_long_form": {
+    "type": "panel",
+    "controls": [
+      {
+        "default@server_form.long_form": {
+          "bindings": [
+            {
+              "binding_name": "#title_text"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(not ((#title_text = 'dbz_race_select') or (#title_text = 'dbz_appearance')))",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "race@dbz_race_form.race_form": {
+          "bindings": [
+            {
+              "binding_name": "#title_text"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#title_text = 'dbz_race_select')",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      },
+      {
+        "appearance@dbz_appearance_form.appearance_form": {
+          "bindings": [
+            {
+              "binding_name": "#title_text"
+            },
+            {
+              "binding_type": "view",
+              "source_property_name": "(#title_text = 'dbz_appearance')",
+              "target_property_name": "#visible"
+            }
+          ]
+        }
+      }
+    ]
+  },
   "long_form@common_dialogs.main_panel_no_buttons": {
     "$title_panel": "common_dialogs.standard_title_label",
     "$title_size": [
