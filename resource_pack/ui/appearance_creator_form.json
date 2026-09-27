@@ -1,0 +1,393 @@
+{
+  "namespace": "dbz_appearance_form",
+  "appearance_form@server_form.long_form": {
+    "size": [
+      320,
+      205
+    ],
+    "$child_control": "dbz_appearance_form.appearance_panel",
+    "$custom_background": "custom_server_form.background"
+  },
+  "appearance_panel": {
+    "type": "panel",
+    "layer": 2,
+    "controls": [
+      {
+        "title": {
+          "type": "label",
+          "text": "§6§lDRAGON BREAKERS  •  APPEARANCE",
+          "font_size": "normal",
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "offset": [
+            0,
+            7
+          ],
+          "shadow": true
+        }
+      },
+      {
+        "player_renderer": {
+          "type": "custom",
+          "renderer": "live_player_renderer",
+          "size": [
+            92,
+            126
+          ],
+          "offset": [
+            18,
+            14
+          ],
+          "anchor_from": "left_middle",
+          "anchor_to": "left_middle",
+          "layer": 2,
+          "property_bag": {
+            "#look_at_cursor": true
+          }
+        }
+      },
+      {
+        "summary": {
+          "type": "label",
+          "size": [
+            "48%",
+            "44%"
+          ],
+          "offset": [
+            -12,
+            27
+          ],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "text": "#form_text",
+          "text_alignment": "left",
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "font_size": "small",
+          "shadow": true
+        }
+      },
+      {
+        "body_label": {
+          "type": "label",
+          "text": "§fBody Type",
+          "offset": [
+            -74,
+            82
+          ],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "font_size": "small"
+        }
+      },
+      {
+        "skin_label": {
+          "type": "label",
+          "text": "§fSkin Tone",
+          "offset": [
+            -74,
+            104
+          ],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "font_size": "small"
+        }
+      },
+      {
+        "hair_label": {
+          "type": "label",
+          "text": "§fHair Style",
+          "offset": [
+            -74,
+            126
+          ],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "font_size": "small"
+        }
+      },
+      {
+        "color_label": {
+          "type": "label",
+          "text": "§fHair Color",
+          "offset": [
+            -74,
+            148
+          ],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "font_size": "small"
+        }
+      },
+      {
+        "eyes_label": {
+          "type": "label",
+          "text": "§fEyes",
+          "offset": [
+            -74,
+            170
+          ],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "font_size": "small"
+        }
+      },
+      {
+        "prev_body": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -150,
+            78
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 0
+              }
+            }
+          ]
+        }
+      },
+      {
+        "next_body": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -12,
+            78
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prev_skin": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -150,
+            100
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 2
+              }
+            }
+          ]
+        }
+      },
+      {
+        "next_skin": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -12,
+            100
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 3
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prev_hair": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -150,
+            122
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 4
+              }
+            }
+          ]
+        }
+      },
+      {
+        "next_hair": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -12,
+            122
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 5
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prev_color": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -150,
+            144
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 6
+              }
+            }
+          ]
+        }
+      },
+      {
+        "next_color": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -12,
+            144
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 7
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prev_eyes": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -150,
+            166
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 8
+              }
+            }
+          ]
+        }
+      },
+      {
+        "next_eyes": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "offset": [
+            -12,
+            166
+          ],
+          "size": [
+            28,
+            20
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.arrow_button": {
+                "collection_index": 9
+              }
+            }
+          ]
+        }
+      },
+      {
+        "accept": {
+          "type": "stack_panel",
+          "collection_name": "form_buttons",
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "offset": [
+            46,
+            -7
+          ],
+          "size": [
+            120,
+            26
+          ],
+          "controls": [
+            {
+              "button@custom_server_form.accept_button": {
+                "collection_index": 10
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
