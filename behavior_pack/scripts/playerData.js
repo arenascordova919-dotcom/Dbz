@@ -59,3 +59,14 @@ export function getPowerLevel(player) {
 export function clampResource(player, name, max, value) {
   setNumber(player, name, Math.max(0, Math.min(max, value)));
 }
+
+export function getLoadout(player) {
+  return {
+    selectedSlot: Math.max(1, Math.min(4, Math.floor(getNumber(player, "selectedSlot")))),
+    slots: [1, 2, 3, 4].map((slot) => getString(player, `skill${slot}`))
+  };
+}
+
+export function selectSkillSlot(player, slot) {
+  setNumber(player, "selectedSlot", Math.max(1, Math.min(4, Math.floor(slot))));
+}
