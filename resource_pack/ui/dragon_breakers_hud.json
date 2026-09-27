@@ -8,95 +8,6 @@
     ],
     "controls": [
       {
-        "status_panel": {
-          "type": "panel",
-          "anchor_from": "top_left",
-          "anchor_to": "top_left",
-          "offset": [
-            8,
-            8
-          ],
-          "size": [
-            180,
-            58
-          ],
-          "controls": [
-            {
-              "brand": {
-                "type": "label",
-                "anchor_from": "top_left",
-                "anchor_to": "top_left",
-                "offset": [
-                  7,
-                  5
-                ],
-                "text": "DRAGON BREAKERS",
-                "font_size": "small",
-                "color": [
-                  1,
-                  0.78,
-                  0.18
-                ]
-              }
-            },
-            {
-              "hp": {
-                "type": "label",
-                "anchor_from": "top_left",
-                "anchor_to": "top_left",
-                "offset": [
-                  7,
-                  20
-                ],
-                "text": "HP",
-                "font_size": "small",
-                "color": [
-                  1,
-                  0.3,
-                  0.3
-                ]
-              }
-            },
-            {
-              "ki": {
-                "type": "label",
-                "anchor_from": "top_left",
-                "anchor_to": "top_left",
-                "offset": [
-                  7,
-                  33
-                ],
-                "text": "KI",
-                "font_size": "small",
-                "color": [
-                  0.2,
-                  0.75,
-                  1
-                ]
-              }
-            },
-            {
-              "stamina": {
-                "type": "label",
-                "anchor_from": "top_left",
-                "anchor_to": "top_left",
-                "offset": [
-                  7,
-                  46
-                ],
-                "text": "STM",
-                "font_size": "small",
-                "color": [
-                  1,
-                  0.82,
-                  0.2
-                ]
-              }
-            }
-          ]
-        }
-      },
-      {
         "technique_rail": {
           "type": "stack_panel",
           "orientation": "vertical",
@@ -104,39 +15,223 @@
           "anchor_to": "left_middle",
           "offset": [
             8,
-            0
+            18
           ],
           "size": [
-            118,
-            92
+            138,
+            128
           ],
           "controls": [
             {
-              "slot_1": {
-                "type": "label",
-                "text": "§6[1] §fKamehameha",
-                "font_size": "small"
+              "slot1": {
+                "type": "panel",
+                "size": [
+                  "100%",
+                  30
+                ],
+                "controls": [
+                  {
+                    "bg": {
+                      "type": "image",
+                      "texture": "textures/ui/Black",
+                      "alpha": 0.72,
+                      "size": [
+                        "100%",
+                        "100%"
+                      ]
+                    }
+                  },
+                  {
+                    "icon": {
+                      "type": "image",
+                      "texture": "textures/items/kamehameha",
+                      "alpha": 1,
+                      "size": [
+                        24,
+                        24
+                      ],
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        3,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "label": {
+                      "type": "label",
+                      "text": "§6[1] §fKamehameha",
+                      "font_size": "small",
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        32,
+                        0
+                      ],
+                      "shadow": true
+                    }
+                  }
+                ]
               }
             },
             {
-              "slot_2": {
-                "type": "label",
-                "text": "§6[2] §fKi Blast",
-                "font_size": "small"
+              "slot2": {
+                "type": "panel",
+                "size": [
+                  "100%",
+                  30
+                ],
+                "controls": [
+                  {
+                    "bg": {
+                      "type": "image",
+                      "texture": "textures/ui/Black",
+                      "alpha": 0.72,
+                      "size": [
+                        "100%",
+                        "100%"
+                      ]
+                    }
+                  },
+                  {
+                    "icon": {
+                      "type": "image",
+                      "texture": "textures/items/ki_blast",
+                      "alpha": 1,
+                      "size": [
+                        24,
+                        24
+                      ],
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        3,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "label": {
+                      "type": "label",
+                      "text": "§6[2] §fKi Blast",
+                      "font_size": "small",
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        32,
+                        0
+                      ],
+                      "shadow": true
+                    }
+                  }
+                ]
               }
             },
             {
-              "slot_3": {
-                "type": "label",
-                "text": "§6[3] §fSpirit Bomb",
-                "font_size": "small"
+              "slot3": {
+                "type": "panel",
+                "size": [
+                  "100%",
+                  30
+                ],
+                "controls": [
+                  {
+                    "bg": {
+                      "type": "image",
+                      "texture": "textures/ui/Black",
+                      "alpha": 0.72,
+                      "size": [
+                        "100%",
+                        "100%"
+                      ]
+                    }
+                  },
+                  {
+                    "icon": {
+                      "type": "image",
+                      "texture": "textures/items/ki_blast",
+                      "alpha": 0.55,
+                      "size": [
+                        24,
+                        24
+                      ],
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        3,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "label": {
+                      "type": "label",
+                      "text": "§6[3] §fSpirit Bomb",
+                      "font_size": "small",
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        32,
+                        0
+                      ],
+                      "shadow": true
+                    }
+                  }
+                ]
               }
             },
             {
-              "slot_4": {
-                "type": "label",
-                "text": "§6[4] §8Empty",
-                "font_size": "small"
+              "slot4": {
+                "type": "panel",
+                "size": [
+                  "100%",
+                  30
+                ],
+                "controls": [
+                  {
+                    "bg": {
+                      "type": "image",
+                      "texture": "textures/ui/Black",
+                      "alpha": 0.72,
+                      "size": [
+                        "100%",
+                        "100%"
+                      ]
+                    }
+                  },
+                  {
+                    "icon": {
+                      "type": "image",
+                      "texture": "textures/ui/icon_recipe_item",
+                      "alpha": 0.35,
+                      "size": [
+                        24,
+                        24
+                      ],
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        3,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "label": {
+                      "type": "label",
+                      "text": "§6[4] §8Empty",
+                      "font_size": "small",
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "offset": [
+                        32,
+                        0
+                      ],
+                      "shadow": true
+                    }
+                  }
+                ]
               }
             }
           ]
