@@ -149,7 +149,7 @@ async function specials(player) {
     .label(
       `§7Selected slot: §6${loadout.selectedSlot}\n` +
       `§f1 §b${loadout.slots[0]}\n§f2 §e${loadout.slots[1]}\n§f3 §9${loadout.slots[2]}\n§f4 §8${loadout.slots[3]}\n\n` +
-      "§6Mobile: §fSelect the Technique Launcher in hotbar slot 8 and tap Use to fire. Crouch + Use cycles techniques."
+      "§6Mobile controls:\n§fHold Crouch = Charge Ki + Aura\n§fTap Use = Fire active technique\n§fCrouch + Use = Cycle techniques"
     )
     .button("§6Slot 1 • Kamehameha", "textures/items/kamehameha")
     .button("§6Slot 2 • Ki Blast", "textures/items/ki_blast")
@@ -163,6 +163,40 @@ async function specials(player) {
   if (result.selection >= 0 && result.selection <= 3) {
     selectSkillSlot(player, result.selection + 1);
   }
+}
+
+async function settingsMenu(player) {
+  const modes = ["Off", "Low", "Full"];
+  const current = getString(player, "terrainMode");
+  const aura = getNumber(player, "auraEnabled") >= 1;
+
+  const result = await new ActionFormData()
+    .title("§lDRAGON BREAKERS")
+    .header("§6SETTINGS")
+    .label(
+      `§fTerrain Destruction: §e${current}\n` +
+      `§fCharging Aura: ${aura ? "§aON" : "§cOFF"}\n\n` +
+      "§7Low is recommended for mobile. Full creates larger craters and may cost more performance."
+    )
+    .button(`§6Terrain Destruction • ${current}`, "textures/items/ki_blast")
+    .button(`§bCharging Aura • ${aura ? "ON" : "OFF"}`, "textures/items/kamehameha")
+    .button("§8Back", "textures/items/dbz_menu")
+    .show(player);
+
+  if (result.canceled || result.selection === undefined) return;
+
+  if (result.selection === 0) {
+    const index = Math.max(0, modes.indexOf(current));
+    setString(player, "terrainMode", modes[(index + 1) % modes.length]);
+    return settingsMenu(player);
+  }
+
+  if (result.selection === 1) {
+    setNumber(player, "auraEnabled", aura ? 0 : 1);
+    return settingsMenu(player);
+  }
+
+  if (result.selection === 2) return openMainMenu(player);
 }
 
 async function placeholder(player, title, text) {
@@ -199,5 +233,5 @@ export async function openMainMenu(player) {
   if (result.selection === 1) return placeholder(player, "TRANSFORMATIONS", "Transformation selection and visible forms are being connected next.");
   if (result.selection === 2) return specials(player);
   if (result.selection === 3) return placeholder(player, "QUESTS", "Quest progression will be added after the combat/HUD foundation is stable.");
-  if (result.selection === 4) return placeholder(player, "SETTINGS", "HUD and control options are being prepared for mobile.");
+  if (result.selection === 4) return settingsMenu(player);
 }
