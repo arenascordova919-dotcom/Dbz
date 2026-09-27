@@ -1,0 +1,108 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.dbz.body.earthling": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_earthling"
+      ]
+    },
+    "controller.render.dbz.body.saiyan": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_saiyan"
+      ]
+    },
+    "controller.render.dbz.body.namekian": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_namekian"
+      ]
+    },
+    "controller.render.dbz.body.arcosian": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_arcosian"
+      ]
+    },
+    "controller.render.dbz.hair": {
+      "arrays": {
+        "geometries": {
+          "Array.hair": [
+            "Geometry.dbz_hair_0",
+            "Geometry.dbz_hair_1",
+            "Geometry.dbz_hair_2",
+            "Geometry.dbz_hair_3"
+          ]
+        }
+      },
+      "geometry": "Array.hair[q.property('dbz:hair_style')]",
+      "materials": [
+        {
+          "*": "Material.dbz_tint"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_hair"
+      ],
+      "color": {
+        "r": "q.property('dbz:hair_color') == 1 ? 0.28 : q.property('dbz:hair_color') == 2 ? 1.0 : q.property('dbz:hair_color') == 3 ? 0.18 : q.property('dbz:hair_color') == 4 ? 0.95 : 0.06",
+        "g": "q.property('dbz:hair_color') == 1 ? 0.12 : q.property('dbz:hair_color') == 2 ? 0.68 : q.property('dbz:hair_color') == 3 ? 0.45 : q.property('dbz:hair_color') == 4 ? 0.95 : 0.06",
+        "b": "q.property('dbz:hair_color') == 1 ? 0.05 : q.property('dbz:hair_color') == 2 ? 0.08 : q.property('dbz:hair_color') == 3 ? 1.0 : q.property('dbz:hair_color') == 4 ? 0.95 : 0.07"
+      }
+    },
+    "controller.render.dbz.saiyan_tail": {
+      "geometry": "Geometry.dbz_saiyan_tail",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_tail"
+      ]
+    },
+    "controller.render.dbz.namekian_features": {
+      "geometry": "Geometry.dbz_namekian_features",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_namekian_features"
+      ]
+    },
+    "controller.render.dbz.arcosian_features": {
+      "geometry": "Geometry.dbz_arcosian_features",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.dbz_arcosian_features"
+      ]
+    }
+  }
+}
