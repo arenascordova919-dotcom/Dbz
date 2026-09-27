@@ -42,7 +42,7 @@ jobs:
 
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
-          if bp["header"]["version"] != [0, 5, 1]:
+          if bp["header"]["version"] != [0, 5, 2]:
               raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
 
           for manifest in (bp, rp):
@@ -87,7 +87,7 @@ jobs:
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.5.1_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.5.2_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -106,7 +106,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.5.1_TEST
-          path: Dragon_Breakers_v0.5.1_TEST.mcaddon
+          name: Dragon_Breakers_v0.5.2_TEST
+          path: Dragon_Breakers_v0.5.2_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
