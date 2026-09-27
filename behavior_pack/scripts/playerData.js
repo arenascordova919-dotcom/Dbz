@@ -27,7 +27,7 @@ const DEFAULTS = Object.freeze({
   focus: "Balanced",
   auraStyle: "Blue",
   appearanceRevision: 0,
-  bodyType: "Type 1",
+  bodyType: "Normal",
   skinTone: "Default",
   hairStyle: "Style 1",
   hairColor: "Black",
