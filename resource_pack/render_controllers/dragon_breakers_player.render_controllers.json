@@ -9,7 +9,7 @@
         }
       ],
       "textures": [
-        "Array.skin[q.property('dbz:skin_tone')]"
+        "Array.skin[variable.dbz_skin_tone]"
       ],
       "arrays": {
         "textures": {
@@ -30,7 +30,7 @@
         }
       ],
       "textures": [
-        "Array.skin[q.property('dbz:skin_tone')]"
+        "Array.skin[variable.dbz_skin_tone]"
       ],
       "arrays": {
         "textures": {
@@ -51,7 +51,7 @@
         }
       ],
       "textures": [
-        "Array.skin[q.property('dbz:skin_tone')]"
+        "Array.skin[variable.dbz_skin_tone]"
       ],
       "arrays": {
         "textures": {
@@ -72,7 +72,7 @@
         }
       ],
       "textures": [
-        "Array.skin[q.property('dbz:skin_tone')]"
+        "Array.skin[variable.dbz_skin_tone]"
       ],
       "arrays": {
         "textures": {
@@ -94,22 +94,26 @@
             "Geometry.dbz_hair_2",
             "Geometry.dbz_hair_3"
           ]
+        },
+        "textures": {
+          "Array.hair_color": [
+            "Texture.dbz_hair_black",
+            "Texture.dbz_hair_brown",
+            "Texture.dbz_hair_gold",
+            "Texture.dbz_hair_blue",
+            "Texture.dbz_hair_white"
+          ]
         }
       },
-      "geometry": "Array.hair[q.property('dbz:hair_style')]",
+      "geometry": "Array.hair[variable.dbz_hair_style]",
       "materials": [
         {
-          "*": "Material.dbz_tint"
+          "*": "Material.default"
         }
       ],
       "textures": [
-        "Texture.dbz_hair"
-      ],
-      "color": {
-        "r": "q.property('dbz:hair_color') == 1 ? 0.28 : q.property('dbz:hair_color') == 2 ? 1.0 : q.property('dbz:hair_color') == 3 ? 0.18 : q.property('dbz:hair_color') == 4 ? 0.95 : 0.06",
-        "g": "q.property('dbz:hair_color') == 1 ? 0.12 : q.property('dbz:hair_color') == 2 ? 0.68 : q.property('dbz:hair_color') == 3 ? 0.45 : q.property('dbz:hair_color') == 4 ? 0.95 : 0.06",
-        "b": "q.property('dbz:hair_color') == 1 ? 0.05 : q.property('dbz:hair_color') == 2 ? 0.08 : q.property('dbz:hair_color') == 3 ? 1.0 : q.property('dbz:hair_color') == 4 ? 0.95 : 0.07"
-      }
+        "Array.hair_color[variable.dbz_hair_color]"
+      ]
     },
     "controller.render.dbz.saiyan_tail": {
       "geometry": "Geometry.dbz_saiyan_tail",
@@ -161,7 +165,7 @@
         }
       ],
       "textures": [
-        "Array.eyes[q.property('dbz:eye_style')]"
+        "Array.eyes[variable.dbz_eye_style]"
       ]
     }
   }
