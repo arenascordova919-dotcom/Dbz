@@ -39,7 +39,12 @@
         "dbz_arcosian_3": "textures/entity/dragon_breakers/arcosian_3",
         "dbz_eyes_0": "textures/entity/dragon_breakers/eyes_0",
         "dbz_eyes_1": "textures/entity/dragon_breakers/eyes_1",
-        "dbz_eyes_2": "textures/entity/dragon_breakers/eyes_2"
+        "dbz_eyes_2": "textures/entity/dragon_breakers/eyes_2",
+        "dbz_hair_black": "textures/entity/dragon_breakers/hair_black",
+        "dbz_hair_brown": "textures/entity/dragon_breakers/hair_brown",
+        "dbz_hair_gold": "textures/entity/dragon_breakers/hair_gold",
+        "dbz_hair_blue": "textures/entity/dragon_breakers/hair_blue",
+        "dbz_hair_white": "textures/entity/dragon_breakers/hair_white"
       },
       "geometry": {
         "default": "geometry.humanoid.custom",
@@ -72,7 +77,18 @@
           "variable.hand_bob = query.life_time < 0.01 ? 0.0 : variable.hand_bob + ((query.is_on_ground && query.is_alive ? math.clamp(math.sqrt(math.pow(query.position_delta(0), 2.0) + math.pow(query.position_delta(2), 2.0)), 0.0, 0.1) : 0.0) - variable.hand_bob) * 0.02;",
           "variable.map_angle = math.clamp(1 - variable.player_x_rotation / 45.1, 0.0, 1.0);",
           "variable.item_use_normalized = query.main_hand_item_use_duration / query.main_hand_item_max_duration;",
-          "variable.riding_y_offset = query.is_riding_any_entity_of_type('minecraft:minecart', 'minecraft:boat', 'minecraft:chest_boat', 'minecraft:strider') ? -3.0 : 0.0;"
+          "variable.riding_y_offset = query.is_riding_any_entity_of_type('minecraft:minecart', 'minecraft:boat', 'minecraft:chest_boat', 'minecraft:strider') ? -3.0 : 0.0;",
+          "variable.dbz_in_ui = query.is_in_ui;",
+          "variable.dbz_is_earthling = query.is_in_ui ? 1.0 : (query.property('dbz:race') == 'earthling');",
+          "variable.dbz_is_saiyan = query.is_in_ui ? 0.0 : (query.property('dbz:race') == 'saiyan');",
+          "variable.dbz_is_namekian = query.is_in_ui ? 0.0 : (query.property('dbz:race') == 'namekian');",
+          "variable.dbz_is_arcosian = query.is_in_ui ? 0.0 : (query.property('dbz:race') == 'arcosian');",
+          "variable.dbz_body_type = query.is_in_ui ? 0.0 : query.property('dbz:body_type');",
+          "variable.dbz_skin_tone = query.is_in_ui ? 0.0 : query.property('dbz:skin_tone');",
+          "variable.dbz_hair_style = query.is_in_ui ? 0.0 : query.property('dbz:hair_style');",
+          "variable.dbz_hair_color = query.is_in_ui ? 0.0 : query.property('dbz:hair_color');",
+          "variable.dbz_eye_style = query.is_in_ui ? 0.0 : query.property('dbz:eye_style');",
+          "variable.dbz_has_tail = query.is_in_ui ? 0.0 : query.property('dbz:has_tail');"
         ],
         "animate": [
           "root",
@@ -167,31 +183,31 @@
       },
       "render_controllers": [
         {
-          "controller.render.dbz.body.earthling": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'earthling'"
+          "controller.render.dbz.body.earthling": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_earthling"
         },
         {
-          "controller.render.dbz.body.saiyan": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'saiyan'"
+          "controller.render.dbz.body.saiyan": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_saiyan"
         },
         {
-          "controller.render.dbz.body.namekian": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'namekian'"
+          "controller.render.dbz.body.namekian": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_namekian"
         },
         {
-          "controller.render.dbz.body.arcosian": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'arcosian'"
+          "controller.render.dbz.body.arcosian": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_arcosian"
         },
         {
-          "controller.render.dbz.hair": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && (query.property('dbz:race') == 'earthling' || query.property('dbz:race') == 'saiyan')"
+          "controller.render.dbz.hair": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && (variable.dbz_is_earthling || variable.dbz_is_saiyan)"
         },
         {
-          "controller.render.dbz.eyes": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && (query.property('dbz:race') == 'earthling' || query.property('dbz:race') == 'saiyan')"
+          "controller.render.dbz.eyes": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && (variable.dbz_is_earthling || variable.dbz_is_saiyan)"
         },
         {
-          "controller.render.dbz.saiyan_tail": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'saiyan' && query.property('dbz:has_tail')"
+          "controller.render.dbz.saiyan_tail": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_saiyan && variable.dbz_has_tail"
         },
         {
-          "controller.render.dbz.namekian_features": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'namekian'"
+          "controller.render.dbz.namekian_features": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_namekian"
         },
         {
-          "controller.render.dbz.arcosian_features": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'arcosian'"
+          "controller.render.dbz.arcosian_features": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && variable.dbz_is_arcosian"
         },
         {
           "controller.render.player.first_person_spectator": "variable.is_first_person && query.is_spectator"
