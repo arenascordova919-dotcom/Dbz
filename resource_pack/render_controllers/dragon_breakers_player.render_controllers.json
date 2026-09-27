@@ -9,8 +9,18 @@
         }
       ],
       "textures": [
-        "Texture.dbz_earthling"
-      ]
+        "Array.skin[q.property('dbz:skin_tone')]"
+      ],
+      "arrays": {
+        "textures": {
+          "Array.skin": [
+            "Texture.dbz_earthling_0",
+            "Texture.dbz_earthling_1",
+            "Texture.dbz_earthling_2",
+            "Texture.dbz_earthling_3"
+          ]
+        }
+      }
     },
     "controller.render.dbz.body.saiyan": {
       "geometry": "Geometry.default",
@@ -20,8 +30,18 @@
         }
       ],
       "textures": [
-        "Texture.dbz_saiyan"
-      ]
+        "Array.skin[q.property('dbz:skin_tone')]"
+      ],
+      "arrays": {
+        "textures": {
+          "Array.skin": [
+            "Texture.dbz_saiyan_0",
+            "Texture.dbz_saiyan_1",
+            "Texture.dbz_saiyan_2",
+            "Texture.dbz_saiyan_3"
+          ]
+        }
+      }
     },
     "controller.render.dbz.body.namekian": {
       "geometry": "Geometry.default",
@@ -31,8 +51,18 @@
         }
       ],
       "textures": [
-        "Texture.dbz_namekian"
-      ]
+        "Array.skin[q.property('dbz:skin_tone')]"
+      ],
+      "arrays": {
+        "textures": {
+          "Array.skin": [
+            "Texture.dbz_namekian_0",
+            "Texture.dbz_namekian_1",
+            "Texture.dbz_namekian_2",
+            "Texture.dbz_namekian_3"
+          ]
+        }
+      }
     },
     "controller.render.dbz.body.arcosian": {
       "geometry": "Geometry.default",
@@ -42,8 +72,18 @@
         }
       ],
       "textures": [
-        "Texture.dbz_arcosian"
-      ]
+        "Array.skin[q.property('dbz:skin_tone')]"
+      ],
+      "arrays": {
+        "textures": {
+          "Array.skin": [
+            "Texture.dbz_arcosian_0",
+            "Texture.dbz_arcosian_1",
+            "Texture.dbz_arcosian_2",
+            "Texture.dbz_arcosian_3"
+          ]
+        }
+      }
     },
     "controller.render.dbz.hair": {
       "arrays": {
