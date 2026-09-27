@@ -1,11 +1,15 @@
 export const CONFIG = Object.freeze({
-  version: "0.6.1",
+  version: "0.6.2",
   maxKi: 100,
   maxStamina: 100,
   kiRegenPerTick: 0.06,
   staminaRegenPerTick: 0.12,
   kiBlastCost: 10,
-  kiBlastDamage: 8,
   kiBlastCooldownTicks: 8,
-  hudIntervalTicks: 4
+  hudIntervalTicks: 4,
+  chargeKiPerPulse: 1.35,
+  chargeIntervalTicks: 2,
+  kiBlastDamage: 10,
+  kamehamehaDamage: 24,
+  spiritBombDamage: 40
 });
