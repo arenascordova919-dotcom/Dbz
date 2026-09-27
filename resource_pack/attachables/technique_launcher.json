@@ -1,0 +1,23 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "dbz:technique_launcher",
+      "item": {
+        "dbz:technique_launcher": "query.owner_identifier == 'minecraft:player'"
+      },
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/transparent"
+      },
+      "geometry": {
+        "default": "geometry.dbz.empty"
+      },
+      "render_controllers": [
+        "controller.render.item_default"
+      ]
+    }
+  }
+}
