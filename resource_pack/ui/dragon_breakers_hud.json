@@ -201,23 +201,6 @@
                     }
                   },
                   {
-                    "icon": {
-                      "type": "image",
-                      "texture": "textures/ui/icon_recipe_item",
-                      "alpha": 0.35,
-                      "size": [
-                        24,
-                        24
-                      ],
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
-                      "offset": [
-                        3,
-                        0
-                      ]
-                    }
-                  },
-                  {
                     "label": {
                       "type": "label",
                       "text": "§6[4] §8Empty",
@@ -259,6 +242,42 @@
           "anchor_to": "center",
           "text": "§6§lDRAGON BREAKERS",
           "font_size": "normal"
+        }
+      }
+    ]
+  },
+  "form_background": {
+    "type": "panel",
+    "size": [
+      "100%",
+      "100%"
+    ],
+    "controls": [
+      {
+        "gold_outer": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "color": [
+            1,
+            0.68,
+            0.08
+          ],
+          "alpha": 0.95,
+          "size": [
+            "100%",
+            "100%"
+          ]
+        }
+      },
+      {
+        "black_inner": {
+          "type": "image",
+          "texture": "textures/ui/Black",
+          "alpha": 0.96,
+          "size": [
+            "100%-4px",
+            "100%-4px"
+          ]
         }
       }
     ]
