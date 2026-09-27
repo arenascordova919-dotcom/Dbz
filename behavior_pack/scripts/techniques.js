@@ -38,14 +38,14 @@ function terrainRadius(player, technique) {
   if (mode === "Off") return 0;
 
   const low = {
-    kiBlast: 1.15,
-    kamehameha: 1.9,
-    spiritBomb: 3.6
+    kiBlast: 1.25,
+    kamehameha: 2.25,
+    spiritBomb: 4.25
   };
   const full = {
-    kiBlast: 2.0,
-    kamehameha: 3.25,
-    spiritBomb: 6.0
+    kiBlast: 2.25,
+    kamehameha: 4.0,
+    spiritBomb: 7.0
   };
 
   return (mode === "Full" ? full : low)[technique] ?? 0;
