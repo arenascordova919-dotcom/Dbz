@@ -2,12 +2,12 @@
   "format_version": 2,
   "header": {
     "name": "Dragon Breakers | BP",
-    "description": "Dragon Breakers v0.7.0 Player Renderer Rebuild gameplay foundation",
+    "description": "Dragon Breakers v0.7.1 Render + Visual Fix gameplay foundation",
     "uuid": "3f0d1e4e-7e8b-4a3f-9d0a-1c8b2e6f4011",
     "version": [
       0,
       7,
-      0
+      1
     ],
     "min_engine_version": [
       1,
@@ -22,7 +22,7 @@
       "version": [
         0,
         7,
-        0
+        1
       ]
     },
     {
@@ -33,7 +33,7 @@
       "version": [
         0,
         7,
-        0
+        1
       ]
     }
   ],
@@ -51,7 +51,7 @@
       "version": [
         0,
         7,
-        0
+        1
       ]
     }
   ]
