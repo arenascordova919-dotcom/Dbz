@@ -2,11 +2,19 @@
   "namespace": "dbz_race_form",
   "race_form@server_form.long_form": {
     "size": [
-      300,
-      195
+      310,
+      190
     ],
     "$child_control": "dbz_race_form.race_panel",
-    "$custom_background": "custom_server_form.background"
+    "$custom_background": "custom_server_form.background",
+    "$title_size": [
+      0,
+      0
+    ],
+    "$title_max_size": [
+      0,
+      0
+    ]
   },
   "race_panel": {
     "type": "panel",
@@ -24,26 +32,6 @@
             8
           ],
           "shadow": true
-        }
-      },
-      {
-        "player_renderer": {
-          "type": "custom",
-          "renderer": "live_player_renderer",
-          "size": [
-            86,
-            118
-          ],
-          "offset": [
-            18,
-            10
-          ],
-          "anchor_from": "left_middle",
-          "anchor_to": "left_middle",
-          "layer": 2,
-          "property_bag": {
-            "#look_at_cursor": true
-          }
         }
       },
       {
