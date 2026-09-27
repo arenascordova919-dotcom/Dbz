@@ -1,0 +1,1171 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.dbz.hair.0",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 4,
+        "visible_bounds_offset": [
+          0,
+          1.7,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.4,
+                30.5,
+                -4.4
+              ],
+              "size": [
+                8.8,
+                2.2,
+                8.8
+              ],
+              "pivot": [
+                0,
+                28,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -3.5,
+                31.5,
+                -2
+              ],
+              "size": [
+                2,
+                4,
+                3
+              ],
+              "pivot": [
+                -2.5,
+                31,
+                -1
+              ],
+              "rotation": [
+                -12,
+                0,
+                -12
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                1.5,
+                31.5,
+                -2
+              ],
+              "size": [
+                2,
+                4,
+                3
+              ],
+              "pivot": [
+                2.5,
+                31,
+                -1
+              ],
+              "rotation": [
+                -12,
+                0,
+                12
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": {
+        "identifier": "geometry.dbz.hair.1",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 4,
+        "visible_bounds_offset": [
+          0,
+          1.7,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.3,
+                30,
+                -4.3
+              ],
+              "size": [
+                8.6,
+                2.3,
+                8.6
+              ],
+              "pivot": [
+                0,
+                28,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -3,
+                31,
+                -1
+              ],
+              "size": [
+                2,
+                7,
+                2
+              ],
+              "pivot": [
+                -2,
+                31,
+                0
+              ],
+              "rotation": [
+                -18,
+                0,
+                -18
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -0.8,
+                31.5,
+                -1.5
+              ],
+              "size": [
+                2,
+                8,
+                2
+              ],
+              "pivot": [
+                0,
+                31,
+                0
+              ],
+              "rotation": [
+                -20,
+                0,
+                0
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                1.2,
+                31,
+                -1
+              ],
+              "size": [
+                2,
+                7,
+                2
+              ],
+              "pivot": [
+                2,
+                31,
+                0
+              ],
+              "rotation": [
+                -18,
+                0,
+                18
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -1,
+                31,
+                2
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "pivot": [
+                0,
+                31,
+                2
+              ],
+              "rotation": [
+                16,
+                0,
+                0
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": {
+        "identifier": "geometry.dbz.hair.2",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 4,
+        "visible_bounds_offset": [
+          0,
+          1.7,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.5,
+                29.5,
+                -4.5
+              ],
+              "size": [
+                9,
+                2.4,
+                9
+              ],
+              "pivot": [
+                0,
+                28,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -3.5,
+                30.5,
+                -1
+              ],
+              "size": [
+                2.2,
+                9,
+                2.2
+              ],
+              "pivot": [
+                -2.4,
+                31,
+                0
+              ],
+              "rotation": [
+                -28,
+                0,
+                -22
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -1.2,
+                31,
+                -1.5
+              ],
+              "size": [
+                2.3,
+                11,
+                2.3
+              ],
+              "pivot": [
+                0,
+                31,
+                0
+              ],
+              "rotation": [
+                -28,
+                0,
+                -7
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                1.2,
+                30.5,
+                -1
+              ],
+              "size": [
+                2.2,
+                9,
+                2.2
+              ],
+              "pivot": [
+                2.4,
+                31,
+                0
+              ],
+              "rotation": [
+                -28,
+                0,
+                22
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -3,
+                31,
+                1.5
+              ],
+              "size": [
+                2.2,
+                8,
+                2.2
+              ],
+              "pivot": [
+                -2.2,
+                31,
+                2
+              ],
+              "rotation": [
+                20,
+                0,
+                -18
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                1,
+                31,
+                1.5
+              ],
+              "size": [
+                2.2,
+                8,
+                2.2
+              ],
+              "pivot": [
+                2.2,
+                31,
+                2
+              ],
+              "rotation": [
+                20,
+                0,
+                18
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": {
+        "identifier": "geometry.dbz.hair.3",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 4,
+        "visible_bounds_offset": [
+          0,
+          1.7,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.4,
+                30,
+                -4.4
+              ],
+              "size": [
+                8.8,
+                2.2,
+                8.8
+              ],
+              "pivot": [
+                0,
+                28,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -4,
+                31,
+                -1
+              ],
+              "size": [
+                2.2,
+                8,
+                2.2
+              ],
+              "pivot": [
+                -2.5,
+                31,
+                0
+              ],
+              "rotation": [
+                -12,
+                0,
+                -38
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -1.8,
+                31.2,
+                -1
+              ],
+              "size": [
+                2.2,
+                9,
+                2.2
+              ],
+              "pivot": [
+                -1,
+                31,
+                0
+              ],
+              "rotation": [
+                -20,
+                0,
+                -25
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                0.4,
+                31,
+                -1
+              ],
+              "size": [
+                2.2,
+                8,
+                2.2
+              ],
+              "pivot": [
+                1.5,
+                31,
+                0
+              ],
+              "rotation": [
+                -18,
+                0,
+                -12
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                2.4,
+                30.5,
+                0
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "pivot": [
+                3,
+                31,
+                0
+              ],
+              "rotation": [
+                10,
+                0,
+                25
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": {
+        "identifier": "geometry.dbz.saiyan_tail",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 4,
+        "visible_bounds_offset": [
+          0,
+          1.5,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "tail1",
+          "parent": "body",
+          "pivot": [
+            0,
+            12,
+            2
+          ],
+          "rotation": [
+            20,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                7,
+                2
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "tail2",
+          "parent": "tail1",
+          "pivot": [
+            0,
+            7,
+            3
+          ],
+          "rotation": [
+            24,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                2,
+                3
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "tail3",
+          "parent": "tail2",
+          "pivot": [
+            0,
+            2,
+            4
+          ],
+          "rotation": [
+            26,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                -3,
+                4
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": {
+        "identifier": "geometry.dbz.namekian_features",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 4,
+        "visible_bounds_offset": [
+          0,
+          1.7,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -6,
+                26,
+                -1
+              ],
+              "size": [
+                2,
+                4,
+                3
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                4,
+                26,
+                -1
+              ],
+              "size": [
+                2,
+                4,
+                3
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -2.2,
+                31,
+                -2
+              ],
+              "size": [
+                1,
+                5,
+                1
+              ],
+              "pivot": [
+                -1.7,
+                31,
+                -1.5
+              ],
+              "rotation": [
+                -18,
+                0,
+                -12
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                1.2,
+                31,
+                -2
+              ],
+              "size": [
+                1,
+                5,
+                1
+              ],
+              "pivot": [
+                1.7,
+                31,
+                -1.5
+              ],
+              "rotation": [
+                -18,
+                0,
+                12
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": {
+        "identifier": "geometry.dbz.arcosian_features",
+        "texture_width": 16,
+        "texture_height": 16,
+        "visible_bounds_width": 3.5,
+        "visible_bounds_height": 4.5,
+        "visible_bounds_offset": [
+          0,
+          1.6,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "waist",
+          "parent": "root",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.4,
+                31,
+                -4.4
+              ],
+              "size": [
+                8.8,
+                1.4,
+                8.8
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -5.5,
+                29,
+                -1
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "pivot": [
+                -4,
+                30,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                -28
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                3.5,
+                29,
+                -1
+              ],
+              "size": [
+                2,
+                6,
+                2
+              ],
+              "pivot": [
+                4,
+                30,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                28
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "arco_tail1",
+          "parent": "body",
+          "pivot": [
+            0,
+            12,
+            2
+          ],
+          "rotation": [
+            28,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.2,
+                6,
+                2
+              ],
+              "size": [
+                2.4,
+                7,
+                2.4
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "arco_tail2",
+          "parent": "arco_tail1",
+          "pivot": [
+            0,
+            6,
+            3
+          ],
+          "rotation": [
+            24,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.1,
+                0,
+                3
+              ],
+              "size": [
+                2.2,
+                7,
+                2.2
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
