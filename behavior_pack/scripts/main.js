@@ -8,7 +8,6 @@ import { startHudBridge } from "./hudBridge.js";
 import { cleanupLegacyRaceAppearance } from "./appearance.js";
 import { startChargingSystem } from "./charging.js";
 import { registerProgression } from "./progression.js";
-import { startPlayerRendererSync, syncPlayerRenderer } from "./playerRenderer.js";
 
 function findEmptyInventorySlot(inventory, avoid = new Set()) {
   for (let i = 0; i < inventory.size; i++) {
@@ -63,11 +62,75 @@ function ensureSystemSlots(player) {
   ensureSystemItemSlot(player, "dbz:menu", 8);
 }
 
+function selectedSystemItem(player) {
+  try {
+    const inventory = player.getComponent("minecraft:inventory")?.container;
+    if (!inventory) return undefined;
+    return inventory.getItem(player.selectedSlotIndex)?.typeId;
+  } catch {
+    return undefined;
+  }
+}
+
+
+function registerMobileControls() {
+  // Selecting slot 9 opens the menu immediately, so mobile players do not
+  // depend on custom-item use behavior.
+  try {
+    world.afterEvents.playerHotbarSelectedSlotChange?.subscribe((event) => {
+      const player = event.player;
+      const typeId = event.itemStack?.typeId;
+
+      if (typeId === "dbz:menu") {
+        system.run(() => openMainMenu(player));
+        return;
+      }
+
+      if (typeId === "dbz:technique_launcher") {
+        try {
+          player.onScreenDisplay.setActionBar("§bLauncher §7• §fJump = Fire §7• §fSneak = Charge §7• §fSneak+Jump = Cycle");
+        } catch {}
+      }
+    });
+  } catch (error) {
+    console.warn("[Dragon Breakers] Hotbar control registration unavailable: " + error);
+  }
+
+  // Jump is a reliable button on touch/controller/keyboard. With the
+  // launcher selected it becomes a fallback fire control.
+  try {
+    world.afterEvents.playerButtonInput?.subscribe((event) => {
+      if (event.button !== "Jump" || event.newButtonState !== "Pressed") return;
+
+      const player = event.player;
+      if (selectedSystemItem(player) !== "dbz:technique_launcher") return;
+      if (getNumber(player, "characterCreated") < 1) {
+        system.run(() => ensureCharacterSetup(player));
+        return;
+      }
+
+      system.run(() => {
+        try {
+          if (player.isSneaking) {
+            const result = cycleTechniqueSlot(player);
+            player.onScreenDisplay.setActionBar(`§6[${result.slot}] §f${result.name} §7selected`);
+          } else {
+            useSelectedTechnique(player);
+          }
+        } catch (error) {
+          console.warn("[Dragon Breakers] Mobile launcher control failed: " + error);
+        }
+      });
+    });
+  } catch (error) {
+    console.warn("[Dragon Breakers] Button input control registration unavailable: " + error);
+  }
+}
+
 function preparePlayer(player) {
   initializePlayer(player);
   ensureSystemSlots(player);
   system.run(() => cleanupLegacyRaceAppearance(player));
-  system.run(() => syncPlayerRenderer(player));
   system.runTimeout(() => ensureCharacterSetup(player), 12);
 
   try {
@@ -112,7 +175,7 @@ system.run(() => {
   startChargingSystem();
   registerCombat();
   registerProgression();
-  startPlayerRendererSync();
+  registerMobileControls();
 
   system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
@@ -120,5 +183,5 @@ system.run(() => {
     }
   }, 100);
 
-  console.warn("[Dragon Breakers] v0.7.2 Mobile Particle Fix loaded.");
+  console.warn("[Dragon Breakers] v0.7.3 Stability + Controls Fix loaded.");
 });
