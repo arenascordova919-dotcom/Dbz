@@ -1,4 +1,4 @@
-import { MolangVariableMap, system } from "@minecraft/server";
+import { system } from "@minecraft/server";
 import { clampResource, getFocusMultiplier, getNumber, getString } from "./playerData.js";
 import { CONFIG } from "./config.js";
 
@@ -6,14 +6,8 @@ const cooldown = new Map();
 const ready = (p, id) => (cooldown.get(p.id + ":" + id) ?? 0) <= system.currentTick;
 const setCooldown = (p, id, ticks) => cooldown.set(p.id + ":" + id, system.currentTick + ticks);
 
-function safeParticle(dimension, id, location, variables) {
-  try { dimension.spawnParticle(id, location, variables); } catch {}
-}
-
-function directionVariables(direction) {
-  const map = new MolangVariableMap();
-  map.setVector3("variable.dbz_dir", direction);
-  return map;
+function safeParticle(dimension, id, location) {
+  try { dimension.spawnParticle(id, location); } catch {}
 }
 
 function point(origin, direction, distance) {
@@ -141,9 +135,9 @@ export function castKamehameha(player) {
       const damaged = new Set();
       let impact = point(head, dir, 34);
 
-      for (let distance = 1.4; distance <= 34; distance += 1.15) {
+      for (let distance = 1.2; distance <= 34; distance += 0.65) {
         const location = point(head, dir, distance);
-        safeParticle(dimension, "dbz:kamehameha_beam", location, directionVariables(dir));
+        safeParticle(dimension, "dbz:kamehameha_beam", location);
 
         for (const entity of entitiesNear(player, location, 1.35)) {
           if (damaged.has(entity.id)) continue;
@@ -168,8 +162,8 @@ export function castKamehameha(player) {
       for (let pass = 1; pass <= 2; pass++) {
         system.runTimeout(() => {
           try {
-            for (let distance = 1.4; distance <= 26; distance += 1.35) {
-              safeParticle(dimension, "dbz:kamehameha_beam", point(head, dir, distance), directionVariables(dir));
+            for (let distance = 1.2; distance <= 28; distance += 0.80) {
+              safeParticle(dimension, "dbz:kamehameha_beam", point(head, dir, distance));
             }
           } catch {}
         }, pass * 2);
@@ -226,8 +220,10 @@ export function castKiBlast(player) {
         safeParticle(dimension, "dbz:ki_blast_core", location);
 
         if (step > 1) {
-          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 0.7), directionVariables(direction));
-          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 1.25), directionVariables(direction));
+          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 0.40));
+          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 0.80));
+          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 1.20));
+          safeParticle(dimension, "dbz:ki_blast_trail", point(origin, direction, distance - 1.60));
         }
 
         const hit = entitiesNear(player, location, 1.15)[0];
