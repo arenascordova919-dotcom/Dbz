@@ -1,5 +1,6 @@
 import { system } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
+import { applyRaceAppearance } from "./appearance.js";
 import {
   getLoadout,
   getNumber,
@@ -13,40 +14,95 @@ import {
 const creationOpen = new Set();
 
 const RACES = [
-  { id: "Saiyan", text: "§6Saiyan\n§7ATK 4  DEF 2  SPD 3  REGEN 0" },
-  { id: "Namekian", text: "§aNamekian\n§7ATK 3  DEF 2  SPD 2  REGEN 2" },
-  { id: "Arcosian", text: "§dArcosian\n§7ATK 3  DEF 3  SPD 1  REGEN 0" },
-  { id: "Earthling", text: "§bEarthling\n§7ATK 2  DEF 2  SPD 3  REGEN 1" }
+  {
+    id: "Saiyan",
+    icon: "textures/items/race_saiyan_icon",
+    color: "§6",
+    description: "Warrior race with explosive growth and strong melee potential.",
+    atk: 4, def: 2, spd: 3, regen: 0,
+    stats: { str: 7, dex: 6, con: 6, wil: 5, mnd: 4, spi: 5 }
+  },
+  {
+    id: "Namekian",
+    icon: "textures/items/race_namekian_icon",
+    color: "§a",
+    description: "Durable fighter with natural regeneration and balanced Ki control.",
+    atk: 3, def: 2, spd: 2, regen: 2,
+    stats: { str: 6, dex: 5, con: 7, wil: 5, mnd: 5, spi: 6 }
+  },
+  {
+    id: "Arcosian",
+    icon: "textures/items/race_arcosian_icon",
+    color: "§d",
+    description: "Powerful alien race with high defense and exceptional Ki potential.",
+    atk: 3, def: 3, spd: 1, regen: 0,
+    stats: { str: 6, dex: 4, con: 7, wil: 6, mnd: 5, spi: 7 }
+  },
+  {
+    id: "Earthling",
+    icon: "textures/items/race_earthling_icon",
+    color: "§b",
+    description: "Adaptable human fighter with balanced speed, technique and growth.",
+    atk: 2, def: 2, spd: 3, regen: 1,
+    stats: { str: 5, dex: 6, con: 5, wil: 5, mnd: 6, spi: 6 }
+  }
 ];
 
+function applyRaceStats(player, race) {
+  for (const [stat, value] of Object.entries(race.stats)) setNumber(player, stat, value);
+}
+
 export async function ensureCharacterCreation(player) {
-  if (!player || getNumber(player, "characterCreated") >= 1) return;
+  if (!player) return;
+  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 1) return;
   if (creationOpen.has(player.id)) return;
 
   creationOpen.add(player.id);
   let retry = false;
+  let index = Math.max(0, RACES.findIndex(r => r.id === getString(player, "race")));
+  if (index < 0) index = 0;
 
   try {
-    const form = new ActionFormData()
-      .title("§lDRAGON BREAKERS")
-      .header("§6CHARACTER CREATION")
-      .label("§fSELECT YOUR RACE\n§7This choice is saved to your character. Race changes will require a special in-game method later.");
+    while (getNumber(player, "creationRevision") < 1) {
+      const race = RACES[index];
+      const form = new ActionFormData()
+        .title("§lDRAGON BREAKERS")
+        .header("§6CHARACTER CREATION")
+        .label(
+          "§fSELECT YOUR RACE\n\n" +
+          `§fRACE: ${race.color}§l${race.id}§r\n` +
+          `§7${race.description}\n\n` +
+          `§fATK: §6${race.atk}   §fDEF: §e${race.def}   §fSPD: §b${race.spd}   §fREGEN: §a${race.regen}\n\n` +
+          "§7Use Previous / Next to preview a race, then confirm."
+        )
+        .button("§6◀  PREVIOUS", race.icon)
+        .button(`§a✔  SELECT ${race.id.toUpperCase()}`, race.icon)
+        .button("§6NEXT  ▶", race.icon);
 
-    for (const race of RACES) {
-      form.button(race.text, "textures/items/dbz_menu");
-    }
-
-    const result = await form.show(player);
-    if (result.canceled || result.selection === undefined) {
-      retry = true;
-    } else {
-      const race = RACES[result.selection];
-      if (!race) {
+      const result = await form.show(player);
+      if (result.canceled || result.selection === undefined) {
         retry = true;
-      } else {
+        break;
+      }
+
+      if (result.selection === 0) {
+        index = (index - 1 + RACES.length) % RACES.length;
+        continue;
+      }
+
+      if (result.selection === 2) {
+        index = (index + 1) % RACES.length;
+        continue;
+      }
+
+      if (result.selection === 1) {
         setString(player, "race", race.id);
+        applyRaceStats(player, race);
         setNumber(player, "characterCreated", 1);
+        setNumber(player, "creationRevision", 1);
+        system.run(() => applyRaceAppearance(player));
         player.sendMessage(`§aCharacter created! Race: §f${race.id}`);
+        break;
       }
     }
   } catch (error) {
@@ -56,7 +112,7 @@ export async function ensureCharacterCreation(player) {
     creationOpen.delete(player.id);
   }
 
-  if (retry && getNumber(player, "characterCreated") < 1) {
+  if (retry && getNumber(player, "creationRevision") < 1) {
     system.runTimeout(() => ensureCharacterCreation(player), 30);
   }
 }
@@ -70,12 +126,8 @@ async function playerStatus(player) {
   const pl = getPowerLevel(player);
 
   const body =
-    `§6Race: §f${race}\n` +
-    `§6Level: §f${level}\n` +
-    `§6Form: §f${formName}\n` +
-    `§6Power Level: §f${pl}\n` +
-    `§6TP: §f${tp}\n` +
-    `§6Mastery: §f${mastery}\n\n` +
+    `§6Race: §f${race}\n§6Level: §f${level}\n§6Form: §f${formName}\n` +
+    `§6Power Level: §f${pl}\n§6TP: §f${tp}\n§6Mastery: §f${mastery}\n\n` +
     `§cSTR §f${getNumber(player, "str")}   §bDEX §f${getNumber(player, "dex")}\n` +
     `§aCON §f${getNumber(player, "con")}   §dWIL §f${getNumber(player, "wil")}\n` +
     `§eMND §f${getNumber(player, "mnd")}   §9SPI §f${getNumber(player, "spi")}`;
@@ -86,7 +138,6 @@ async function playerStatus(player) {
     .label(body)
     .button("§8Back", "textures/items/dbz_menu")
     .show(player);
-
   if (!result.canceled) return openMainMenu(player);
 }
 
@@ -98,7 +149,7 @@ async function specials(player) {
     .label(
       `§7Selected slot: §6${loadout.selectedSlot}\n` +
       `§f1 §b${loadout.slots[0]}\n§f2 §e${loadout.slots[1]}\n§f3 §9${loadout.slots[2]}\n§f4 §8${loadout.slots[3]}\n\n` +
-      "§6Mobile control: §fDouble-tap Sneak/Crouch to fire the selected technique."
+      "§6Mobile: §fSelect the Technique Launcher in hotbar slot 8 and tap Use to fire. Crouch + Use cycles techniques."
     )
     .button("§6Slot 1 • Kamehameha", "textures/items/kamehameha")
     .button("§6Slot 2 • Ki Blast", "textures/items/ki_blast")
@@ -111,7 +162,6 @@ async function specials(player) {
   if (result.selection === 4) return openMainMenu(player);
   if (result.selection >= 0 && result.selection <= 3) {
     selectSkillSlot(player, result.selection + 1);
-    player.sendMessage(`§6Active technique: §f[${result.selection + 1}] ${getLoadout(player).slots[result.selection]} §7• Double-tap Sneak to fire`);
   }
 }
 
@@ -126,9 +176,7 @@ async function placeholder(player, title, text) {
 }
 
 export async function openMainMenu(player) {
-  if (getNumber(player, "characterCreated") < 1) {
-    return ensureCharacterCreation(player);
-  }
+  if (getNumber(player, "creationRevision") < 1) return ensureCharacterCreation(player);
 
   const race = getString(player, "race");
   const level = getNumber(player, "level");
@@ -147,7 +195,6 @@ export async function openMainMenu(player) {
 
   const result = await form.show(player);
   if (result.canceled || result.selection === undefined) return;
-
   if (result.selection === 0) return playerStatus(player);
   if (result.selection === 1) return placeholder(player, "TRANSFORMATIONS", "Transformation selection and visible forms are being connected next.");
   if (result.selection === 2) return specials(player);
