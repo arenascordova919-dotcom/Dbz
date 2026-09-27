@@ -12,8 +12,14 @@ import {
 
 const creationOpen = new Set();
 const customizationOpen = new Set();
+const appearanceOpen = new Set();
 const FOCUSES = ["Balanced", "Power", "Speed", "Ki"];
 const AURA_STYLES = ["Blue", "Gold", "Violet", "Green"];
+const BODY_TYPES = ["Type 1", "Type 2", "Type 3"];
+const SKIN_TONES = ["Default", "Light", "Medium", "Dark"];
+const HAIR_STYLES = ["Style 1", "Style 2", "Style 3", "Style 4"];
+const HAIR_COLORS = ["Black", "Brown", "Gold", "Blue", "White"];
+const EYE_STYLES = ["Eyes 1", "Eyes 2", "Eyes 3"];
 
 const RACES = [
   {
@@ -99,8 +105,7 @@ export async function ensureCharacterCreation(player) {
         applyRaceStats(player, race);
         setNumber(player, "characterCreated", 1);
         setNumber(player, "creationRevision", 2);
-        player.sendMessage(`§aRace selected: §f${race.id}`);
-        system.runTimeout(() => ensureRaceCustomization(player), 2);
+        system.runTimeout(() => ensureAppearanceSetup(player), 2);
         break;
       }
     }
@@ -113,6 +118,86 @@ export async function ensureCharacterCreation(player) {
 
   if (retry && getNumber(player, "creationRevision") < 2) {
     system.runTimeout(() => ensureCharacterCreation(player), 30);
+  }
+}
+
+export async function ensureAppearanceSetup(player) {
+  if (!player || getNumber(player, "appearanceRevision") >= 1) return ensureRaceCustomization(player);
+  if (appearanceOpen.has(player.id)) return;
+
+  appearanceOpen.add(player.id);
+  let bodyType = getString(player, "bodyType");
+  let skinTone = getString(player, "skinTone");
+  let hairStyle = getString(player, "hairStyle");
+  let hairColor = getString(player, "hairColor");
+  let eyeStyle = getString(player, "eyeStyle");
+
+  if (!BODY_TYPES.includes(bodyType)) bodyType = "Type 1";
+  if (!SKIN_TONES.includes(skinTone)) skinTone = "Default";
+  if (!HAIR_STYLES.includes(hairStyle)) hairStyle = "Style 1";
+  if (!HAIR_COLORS.includes(hairColor)) hairColor = "Black";
+  if (!EYE_STYLES.includes(eyeStyle)) eyeStyle = "Eyes 1";
+
+  try {
+    while (getNumber(player, "appearanceRevision") < 1) {
+      const race = getString(player, "race");
+      const form = new ActionFormData()
+        .title("§lDRAGON BREAKERS")
+        .header("§6APPEARANCE")
+        .label(
+          `§fRace: §e${race}\n` +
+          `§fBody: §6${bodyType}   §fSkin: §6${skinTone}\n` +
+          `§fHair: §6${hairStyle} / ${hairColor}   §fEyes: §6${eyeStyle}\n\n` +
+          "§7These appearance choices are saved to your fighter profile and will drive future race models/transformations."
+        )
+        .button(`§6Body Type • ${bodyType}`, "textures/items/race_saiyan_icon")
+        .button(`§6Skin Tone • ${skinTone}`, "textures/items/race_earthling_icon")
+        .button(`§6Hair Style • ${hairStyle}`, "textures/items/kamehameha")
+        .button(`§6Hair Color • ${hairColor}`, "textures/items/ki_blast")
+        .button(`§6Eyes • ${eyeStyle}`, "textures/items/spirit_bomb")
+        .button("§a✔  CONTINUE");
+
+      const result = await form.show(player);
+      if (result.canceled || result.selection === undefined) break;
+
+      if (result.selection === 0) {
+        bodyType = BODY_TYPES[(BODY_TYPES.indexOf(bodyType) + 1) % BODY_TYPES.length];
+        continue;
+      }
+      if (result.selection === 1) {
+        skinTone = SKIN_TONES[(SKIN_TONES.indexOf(skinTone) + 1) % SKIN_TONES.length];
+        continue;
+      }
+      if (result.selection === 2) {
+        hairStyle = HAIR_STYLES[(HAIR_STYLES.indexOf(hairStyle) + 1) % HAIR_STYLES.length];
+        continue;
+      }
+      if (result.selection === 3) {
+        hairColor = HAIR_COLORS[(HAIR_COLORS.indexOf(hairColor) + 1) % HAIR_COLORS.length];
+        continue;
+      }
+      if (result.selection === 4) {
+        eyeStyle = EYE_STYLES[(EYE_STYLES.indexOf(eyeStyle) + 1) % EYE_STYLES.length];
+        continue;
+      }
+      if (result.selection === 5) {
+        setString(player, "bodyType", bodyType);
+        setString(player, "skinTone", skinTone);
+        setString(player, "hairStyle", hairStyle);
+        setString(player, "hairColor", hairColor);
+        setString(player, "eyeStyle", eyeStyle);
+        setNumber(player, "appearanceRevision", 1);
+        break;
+      }
+    }
+  } catch (error) {
+    console.warn("[Dragon Breakers] Appearance setup failed: " + error);
+  } finally {
+    appearanceOpen.delete(player.id);
+  }
+
+  if (getNumber(player, "appearanceRevision") >= 1) {
+    system.runTimeout(() => ensureRaceCustomization(player), 2);
   }
 }
 
@@ -158,7 +243,6 @@ export async function ensureRaceCustomization(player) {
         setString(player, "focus", focus);
         setString(player, "auraStyle", aura);
         setNumber(player, "creationRevision", 3);
-        player.sendMessage(`§aFighter setup complete! §7Focus: §f${focus} §7• Aura: §f${aura}`);
         break;
       }
     }
@@ -172,6 +256,7 @@ export async function ensureRaceCustomization(player) {
 export async function ensureCharacterSetup(player) {
   const revision = getNumber(player, "creationRevision");
   if (revision < 2) return ensureCharacterCreation(player);
+  if (getNumber(player, "appearanceRevision") < 1) return ensureAppearanceSetup(player);
   if (revision < 3) return ensureRaceCustomization(player);
 }
 
@@ -185,11 +270,18 @@ async function playerStatus(player) {
   const xp = getNumber(player, "xp");
   const focus = getString(player, "focus");
   const auraStyle = getString(player, "auraStyle");
+  const bodyType = getString(player, "bodyType");
+  const skinTone = getString(player, "skinTone");
+  const hairStyle = getString(player, "hairStyle");
+  const hairColor = getString(player, "hairColor");
+  const eyeStyle = getString(player, "eyeStyle");
 
   const body =
     `§6Race: §f${race}\n§6Level: §f${level}\n§6Form: §f${formName}\n` +
     `§6Power Level: §f${pl}\n§6XP: §f${Math.floor(xp)}\n§6TP: §f${tp}\n§6Mastery: §f${mastery}\n` +
-    `§6Focus: §f${focus}   §6Aura: §f${auraStyle}\n\n` +
+    `§6Focus: §f${focus}   §6Aura: §f${auraStyle}\n` +
+    `§6Body: §f${bodyType}   §6Skin: §f${skinTone}\n` +
+    `§6Hair: §f${hairStyle}/${hairColor}   §6Eyes: §f${eyeStyle}\n\n` +
     `§cSTR §f${getNumber(player, "str")}   §bDEX §f${getNumber(player, "dex")}\n` +
     `§aCON §f${getNumber(player, "con")}   §dWIL §f${getNumber(player, "wil")}\n` +
     `§eMND §f${getNumber(player, "mnd")}   §9SPI §f${getNumber(player, "spi")}`;
@@ -279,7 +371,7 @@ async function placeholder(player, title, text) {
 }
 
 export async function openMainMenu(player) {
-  if (getNumber(player, "creationRevision") < 3) return ensureCharacterSetup(player);
+  if (getNumber(player, "creationRevision") < 3 || getNumber(player, "appearanceRevision") < 1) return ensureCharacterSetup(player);
 
   const race = getString(player, "race");
   const level = getNumber(player, "level");
