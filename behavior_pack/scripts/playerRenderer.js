@@ -8,7 +8,7 @@ const RACE = Object.freeze({
   Arcosian: "arcosian",
   Unselected: "earthling"
 });
-const BODY = Object.freeze({ "Type 1": 0, "Type 2": 1, "Type 3": 2 });
+const BODY = Object.freeze({ "Type 1": 0, "Type 2": 1, "Type 3": 2, Normal: 0, Muscular: 1, Slim: 2 });
 const SKIN = Object.freeze({ Default: 0, Light: 1, Medium: 2, Dark: 3 });
 const HAIR = Object.freeze({ "Style 1": 0, "Style 2": 1, "Style 3": 2, "Style 4": 3 });
 const HAIR_COLOR = Object.freeze({ Black: 0, Brown: 1, Gold: 2, Blue: 3, White: 4 });
