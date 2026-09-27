@@ -15,9 +15,9 @@
         "textures": {
           "Array.skin": [
             "Texture.dbz_earthling_0",
-            "Texture.dbz_earthling_1",
-            "Texture.dbz_earthling_2",
-            "Texture.dbz_earthling_3"
+            "Texture.dbz_earthling_0",
+            "Texture.dbz_earthling_0",
+            "Texture.dbz_earthling_0"
           ]
         }
       }
@@ -36,9 +36,9 @@
         "textures": {
           "Array.skin": [
             "Texture.dbz_saiyan_0",
-            "Texture.dbz_saiyan_1",
-            "Texture.dbz_saiyan_2",
-            "Texture.dbz_saiyan_3"
+            "Texture.dbz_saiyan_0",
+            "Texture.dbz_saiyan_0",
+            "Texture.dbz_saiyan_0"
           ]
         }
       }
@@ -57,9 +57,9 @@
         "textures": {
           "Array.skin": [
             "Texture.dbz_namekian_0",
-            "Texture.dbz_namekian_1",
-            "Texture.dbz_namekian_2",
-            "Texture.dbz_namekian_3"
+            "Texture.dbz_namekian_0",
+            "Texture.dbz_namekian_0",
+            "Texture.dbz_namekian_0"
           ]
         }
       }
@@ -78,9 +78,9 @@
         "textures": {
           "Array.skin": [
             "Texture.dbz_arcosian_0",
-            "Texture.dbz_arcosian_1",
-            "Texture.dbz_arcosian_2",
-            "Texture.dbz_arcosian_3"
+            "Texture.dbz_arcosian_0",
+            "Texture.dbz_arcosian_0",
+            "Texture.dbz_arcosian_0"
           ]
         }
       }
@@ -94,26 +94,22 @@
             "Geometry.dbz_hair_2",
             "Geometry.dbz_hair_3"
           ]
-        },
-        "textures": {
-          "Array.hair_color": [
-            "Texture.dbz_hair_black",
-            "Texture.dbz_hair_brown",
-            "Texture.dbz_hair_gold",
-            "Texture.dbz_hair_blue",
-            "Texture.dbz_hair_white"
-          ]
         }
       },
       "geometry": "Array.hair[variable.dbz_hair_style]",
       "materials": [
         {
-          "*": "Material.default"
+          "*": "Material.dbz_tint"
         }
       ],
       "textures": [
-        "Array.hair_color[variable.dbz_hair_color]"
-      ]
+        "Texture.dbz_hair"
+      ],
+      "color": {
+        "r": "variable.dbz_hair_color == 1 ? 0.38 : variable.dbz_hair_color == 2 ? 1.0 : variable.dbz_hair_color == 3 ? 0.22 : variable.dbz_hair_color == 4 ? 0.96 : 0.08",
+        "g": "variable.dbz_hair_color == 1 ? 0.17 : variable.dbz_hair_color == 2 ? 0.72 : variable.dbz_hair_color == 3 ? 0.50 : variable.dbz_hair_color == 4 ? 0.96 : 0.08",
+        "b": "variable.dbz_hair_color == 1 ? 0.08 : variable.dbz_hair_color == 2 ? 0.10 : variable.dbz_hair_color == 3 ? 1.0 : variable.dbz_hair_color == 4 ? 0.96 : 0.09"
+      }
     },
     "controller.render.dbz.saiyan_tail": {
       "geometry": "Geometry.dbz_saiyan_tail",
