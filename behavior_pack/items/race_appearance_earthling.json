@@ -9,11 +9,7 @@
       "minecraft:display_name": {
         "value": "Earthling Appearance"
       },
-      "minecraft:icon": "race_earthling_icon",
-      "minecraft:wearable": {
-        "slot": "slot.armor.head"
-      },
-      "minecraft:keep_on_death": {}
+      "minecraft:icon": "race_earthling_icon"
     }
   }
 }
