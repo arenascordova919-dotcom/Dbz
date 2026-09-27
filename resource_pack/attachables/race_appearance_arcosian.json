@@ -15,10 +15,10 @@
         "enchanted": "textures/misc/enchanted_actor_glint"
       },
       "geometry": {
-        "default": "geometry.player.armor1"
+        "default": "geometry.humanoid.armor.helmet"
       },
       "scripts": {
-        "parent_setup": "variable.helmet_layer_visible = 0.0; variable.chest_layer_visible = 0.0; variable.leg_layer_visible = 0.0; variable.boot_layer_visible = 0.0;"
+        "parent_setup": "variable.helmet_layer_visible = 0.0;"
       },
       "render_controllers": [
         "controller.render.armor"
