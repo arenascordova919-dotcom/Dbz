@@ -33,14 +33,14 @@ function spawnAura(player, pulse) {
     const wave = Math.cos(pulse * 0.24) * 0.05;
 
     // Layered flames hug the torso instead of making two giant flat walls.
-    safeParticle(d, flame, { x: p.x, y: p.y + 0.78, z: p.z - 0.10 });
-    safeParticle(d, flame, { x: p.x - 0.30 + sway, y: p.y + 0.72, z: p.z + 0.03 });
-    safeParticle(d, flame, { x: p.x + 0.30 - sway, y: p.y + 0.72, z: p.z + 0.03 });
+    safeParticle(d, flame, { x: p.x, y: p.y + 0.72, z: p.z - 0.08 });
+    safeParticle(d, flame, { x: p.x - 0.24 + sway, y: p.y + 0.68, z: p.z + 0.02 });
+    safeParticle(d, flame, { x: p.x + 0.24 - sway, y: p.y + 0.68, z: p.z + 0.02 });
 
     // Smaller lower-body flames give a continuous silhouette.
     if (pulse % 2 === 0) {
-      safeParticle(d, flame, { x: p.x - 0.17, y: p.y + 0.28, z: p.z + 0.05 });
-      safeParticle(d, flame, { x: p.x + 0.17, y: p.y + 0.28, z: p.z + 0.05 });
+      safeParticle(d, spark, { x: p.x - 0.18, y: p.y + 0.18, z: p.z + 0.04 });
+      safeParticle(d, spark, { x: p.x + 0.18, y: p.y + 0.18, z: p.z + 0.04 });
     }
 
     // Shoulder/head energy sparks rise above the model.
@@ -50,7 +50,10 @@ function spawnAura(player, pulse) {
 
     // Intermittent extra core flame gives the charge a breathing/pulsing feel.
     if (pulse % 8 === 0) {
-      safeParticle(d, flame, { x: p.x, y: p.y + 0.90, z: p.z + 0.08 });
+      safeParticle(d, flame, { x: p.x, y: p.y + 0.88, z: p.z + 0.06 });
+    }
+    if (pulse % 12 === 0) {
+      safeParticle(d, "dbz:aura_ring", { x: p.x, y: p.y + 0.04, z: p.z });
     }
   } catch {}
 }
