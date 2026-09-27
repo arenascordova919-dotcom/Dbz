@@ -183,16 +183,16 @@ export async function ensureAppearanceSetup(player) {
           `§fEyes   §6${eyeStyle}\n\n` +
           "§7Use the arrows to preview your fighter, then confirm."
         )
-        .button(`§6◀ ${bodyType}`)
-        .button(`§6${bodyType} ▶`)
-        .button(`§6◀ ${skinTone}`)
-        .button(`§6${skinTone} ▶`)
-        .button(`§6◀ ${hairAllowed ? hairStyle : "N/A"}`)
-        .button(`§6${hairAllowed ? hairStyle : "N/A"} ▶`)
-        .button(`§6◀ ${hairAllowed ? hairColor : "N/A"}`)
-        .button(`§6${hairAllowed ? hairColor : "N/A"} ▶`)
-        .button(`§6◀ ${eyeStyle}`)
-        .button(`§6${eyeStyle} ▶`)
+        .button("§6◀")
+        .button("§6▶")
+        .button("§6◀")
+        .button("§6▶")
+        .button("§6◀")
+        .button("§6▶")
+        .button("§6◀")
+        .button("§6▶")
+        .button("§6◀")
+        .button("§6▶")
         .button("§a✔  ACCEPT");
 
       const result = await form.show(player);
