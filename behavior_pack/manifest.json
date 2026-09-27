@@ -2,12 +2,12 @@
   "format_version": 2,
   "header": {
     "name": "Dragon Breakers | BP",
-    "description": "Dragon Breakers v0.6.1 gameplay foundation",
+    "description": "Dragon Breakers v0.6.2 gameplay foundation",
     "uuid": "3f0d1e4e-7e8b-4a3f-9d0a-1c8b2e6f4011",
     "version": [
       0,
       6,
-      1
+      2
     ],
     "min_engine_version": [
       1,
@@ -22,7 +22,7 @@
       "version": [
         0,
         6,
-        1
+        2
       ]
     },
     {
@@ -33,7 +33,7 @@
       "version": [
         0,
         6,
-        1
+        2
       ]
     }
   ],
@@ -51,7 +51,7 @@
       "version": [
         0,
         6,
-        1
+        2
       ]
     }
   ]
