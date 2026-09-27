@@ -25,7 +25,13 @@ const DEFAULTS = Object.freeze({
   terrainMode: "Low",
   auraEnabled: 1,
   focus: "Balanced",
-  auraStyle: "Blue"
+  auraStyle: "Blue",
+  appearanceRevision: 0,
+  bodyType: "Type 1",
+  skinTone: "Default",
+  hairStyle: "Style 1",
+  hairColor: "Black",
+  eyeStyle: "Eyes 1"
 });
 
 const key = (name) => `dbz:${name}`;
