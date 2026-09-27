@@ -3,7 +3,7 @@ name: Dragon Breakers Validate and Build
 on:
   push:
     branches:
-      - build/dragon-breakers-ui-v05
+      - build/v0.7-player-render-rebuild
   workflow_dispatch:
 
 permissions:
@@ -26,205 +26,194 @@ jobs:
             node --check "$file"
           done
 
-      - name: Validate JSON, UUIDs, versions, and texture references
+      - name: Validate Dragon Breakers v0.7.0
         run: |
           python - <<'PY'
-          import json, pathlib, uuid, sys
+          import json, pathlib, uuid
           from PIL import Image
 
-          roots = [pathlib.Path("behavior_pack"), pathlib.Path("resource_pack")]
-          for root in roots:
+          BP = pathlib.Path("behavior_pack")
+          RP = pathlib.Path("resource_pack")
+
+          # JSON syntax
+          for root in (BP, RP):
               for path in root.rglob("*.json"):
                   try:
-                      with path.open(encoding="utf-8") as f:
-                          json.load(f)
+                      json.loads(path.read_text(encoding="utf-8"))
                   except Exception as exc:
                       raise SystemExit(f"Invalid JSON: {path}: {exc}")
 
-          # Decode every PNG so malformed/corrupt textures fail CI before mobile testing.
-          for png_path in pathlib.Path("resource_pack").rglob("*.png"):
+          # PNG integrity
+          for path in RP.rglob("*.png"):
               try:
-                  with Image.open(png_path) as image:
+                  with Image.open(path) as image:
                       image.verify()
               except Exception as exc:
-                  raise SystemExit(f"Malformed PNG: {png_path}: {exc}")
+                  raise SystemExit(f"Malformed PNG: {path}: {exc}")
 
-          # v0.6.5 must not contain the old fake race armor/item system at all.
-          legacy_items = list(pathlib.Path("behavior_pack/items").glob("race_appearance_*.json"))
-          if legacy_items:
-              raise SystemExit(f"Legacy race appearance items still exist: {legacy_items}")
-          legacy_attachables = list(pathlib.Path("resource_pack/attachables").glob("race_appearance_*.json"))
-          if legacy_attachables:
-              raise SystemExit(f"Legacy race armor attachables still exist: {legacy_attachables}")
-          legacy_textures = list(pathlib.Path("resource_pack/textures/entity").glob("race_*.png"))
-          if legacy_textures:
-              raise SystemExit(f"Legacy race body textures still exist: {legacy_textures}")
-
-          # Menu and technique launcher must render with empty geometry in-hand while retaining inventory icons.
-          for hidden_item in ["menu.json", "technique_launcher.json"]:
-              attachable_path = pathlib.Path("resource_pack/attachables") / hidden_item
-              if not attachable_path.exists():
-                  raise SystemExit(f"Missing invisible in-hand attachable: {attachable_path}")
-              attachable = json.load(open(attachable_path, encoding="utf-8"))
-              geometry = attachable.get("minecraft:attachable", {}).get("description", {}).get("geometry", {}).get("default")
-              if geometry != "geometry.dbz.empty":
-                  raise SystemExit(f"System item is not using empty held geometry: {attachable_path}")
-
-          bp = json.load(open("behavior_pack/manifest.json", encoding="utf-8"))
-          rp = json.load(open("resource_pack/manifest.json", encoding="utf-8"))
-
+          bp = json.load(open(BP / "manifest.json", encoding="utf-8"))
+          rp = json.load(open(RP / "manifest.json", encoding="utf-8"))
+          expected = [0, 7, 0]
+          if bp["header"]["version"] != expected or rp["header"]["version"] != expected:
+              raise SystemExit(f"Expected v0.7.0, got BP={bp['header']['version']} RP={rp['header']['version']}")
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
-          if bp["header"]["version"] != [0, 6, 5]:
-              raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
 
           for manifest in (bp, rp):
               uuid.UUID(manifest["header"]["uuid"])
               for module in manifest.get("modules", []):
                   uuid.UUID(module["uuid"])
-              for dependency in manifest.get("dependencies", []):
-                  if "uuid" in dependency:
-                      uuid.UUID(dependency["uuid"])
+              for dep in manifest.get("dependencies", []):
+                  if "uuid" in dep:
+                      uuid.UUID(dep["uuid"])
 
           if not any(d.get("uuid") == rp["header"]["uuid"] for d in bp.get("dependencies", [])):
               raise SystemExit("BP does not depend on RP")
           if not any(d.get("uuid") == bp["header"]["uuid"] for d in rp.get("dependencies", [])):
               raise SystemExit("RP does not depend on BP")
 
-          atlas = json.load(open("resource_pack/textures/item_texture.json", encoding="utf-8"))
+          # Old fake race armor must stay gone.
+          if list((BP / "items").glob("race_appearance_*.json")):
+              raise SystemExit("Legacy race appearance items returned")
+          if list((RP / "attachables").glob("race_appearance_*.json")):
+              raise SystemExit("Legacy race appearance attachables returned")
+
+          # Menu/launcher remain inventory-visible but invisible in hand.
+          for hidden in ("menu.json", "technique_launcher.json"):
+              path = RP / "attachables" / hidden
+              if not path.exists():
+                  raise SystemExit(f"Missing hidden-hand attachable: {path}")
+              data = json.load(open(path, encoding="utf-8"))
+              geometry = data["minecraft:attachable"]["description"]["geometry"]["default"]
+              if geometry != "geometry.dbz.empty":
+                  raise SystemExit(f"{hidden} does not use empty held geometry")
+
+          required = [
+              BP / "entities/player.json",
+              BP / "scripts/playerRenderer.js",
+              RP / "entity/player.entity.json",
+              RP / "models/entity/dragon_breakers_player.geo.json",
+              RP / "animations/dragon_breakers_player.animation.json",
+              RP / "render_controllers/dragon_breakers_player.render_controllers.json",
+              RP / "ui/custom_server_form.json",
+              RP / "ui/race_creator_form.json",
+              RP / "ui/appearance_creator_form.json",
+          ]
+          for path in required:
+              if not path.exists():
+                  raise SystemExit(f"Missing v0.7.0 renderer/creator file: {path}")
+
+          # BP player must preserve vanilla player and expose synced DBZ properties.
+          bp_player = json.load(open(BP / "entities/player.json", encoding="utf-8"))
+          desc = bp_player["minecraft:entity"]["description"]
+          if desc.get("identifier") != "minecraft:player":
+              raise SystemExit("BP player override does not target minecraft:player")
+          props = desc.get("properties", {})
+          required_props = {
+              "dbz:race", "dbz:body_type", "dbz:skin_tone", "dbz:hair_style",
+              "dbz:hair_color", "dbz:eye_style", "dbz:has_tail",
+              "dbz:aura_style", "dbz:charging", "dbz:transformation"
+          }
+          missing = required_props - set(props)
+          if missing:
+              raise SystemExit(f"Missing synced player properties: {sorted(missing)}")
+          for key in required_props:
+              if props[key].get("client_sync") is not True:
+                  raise SystemExit(f"Player property not client synced: {key}")
+
+          # Client player must replace normal third-person skin with DBZ race renderers.
+          client = json.load(open(RP / "entity/player.entity.json", encoding="utf-8"))
+          cdesc = client["minecraft:client_entity"]["description"]
+          if cdesc.get("identifier") != "minecraft:player":
+              raise SystemExit("RP client entity does not target minecraft:player")
+          controllers = cdesc.get("render_controllers", [])
+          controller_text = json.dumps(controllers)
+          for token in (
+              "controller.render.dbz.body.earthling",
+              "controller.render.dbz.body.saiyan",
+              "controller.render.dbz.body.namekian",
+              "controller.render.dbz.body.arcosian",
+              "controller.render.dbz.hair",
+              "controller.render.dbz.saiyan_tail",
+              "controller.render.dbz.namekian_features",
+              "controller.render.dbz.arcosian_features",
+              "controller.render.dbz.eyes",
+          ):
+              if token not in controller_text:
+                  raise SystemExit(f"Missing client render controller route: {token}")
+
+          # Normal vanilla third-person controller must be suppressed for non-spectator gameplay.
+          normal_vanilla = any(
+              isinstance(entry, dict) and "controller.render.player.third_person" in entry
+              for entry in controllers
+          )
+          if normal_vanilla:
+              raise SystemExit("Vanilla third-person player renderer still active alongside DBZ model")
+
+          # All player client texture paths must exist when they point to our pack.
+          for name, texture in cdesc.get("textures", {}).items():
+              if texture.startswith("textures/entity/dragon_breakers/"):
+                  path = RP / (texture + ".png")
+                  if not path.exists():
+                      raise SystemExit(f"Client player texture missing: {name} -> {path}")
+
+          # Render-controller texture/geometry aliases must resolve to client entity aliases.
+          rc = json.load(open(RP / "render_controllers/dragon_breakers_player.render_controllers.json", encoding="utf-8"))
+          if len(rc.get("render_controllers", {})) < 9:
+              raise SystemExit("Dragon Breakers player render-controller set is incomplete")
+
+          # Custom UI routing + live renderer.
+          ui_defs = json.load(open(RP / "ui/_ui_defs.json", encoding="utf-8"))
+          for entry in ui_defs.get("ui_defs", []):
+              path = RP / entry
+              if not path.exists():
+                  raise SystemExit(f"_ui_defs references missing file: {path}")
+
+          server_form = (RP / "ui/server_form.json").read_text(encoding="utf-8")
+          race_ui = (RP / "ui/race_creator_form.json").read_text(encoding="utf-8")
+          appearance_ui = (RP / "ui/appearance_creator_form.json").read_text(encoding="utf-8")
+          if "dbz_race_select" not in server_form or "dbz_appearance" not in server_form:
+              raise SystemExit("Custom race/appearance server-form routing missing")
+          if "live_player_renderer" not in race_ui or "live_player_renderer" not in appearance_ui:
+              raise SystemExit("Live player preview missing from creator UI")
+
+          # Script must sync render properties and appearance UI must use dedicated titles.
+          renderer_js = (BP / "scripts/playerRenderer.js").read_text(encoding="utf-8")
+          menu_js = (BP / "scripts/menu.js").read_text(encoding="utf-8")
+          if 'setProperty(property, value)' not in renderer_js:
+              raise SystemExit("Player renderer property synchronization missing")
+          if '.title("dbz_race_select")' not in menu_js or '.title("dbz_appearance")' not in menu_js:
+              raise SystemExit("Creator scripts are not using dedicated UI routes")
+          if '.button("§fCharacter"' in menu_js or "characterMenu(" in menu_js:
+              raise SystemExit("Removed Character main-menu entry returned")
+
+          # Existing atlas references.
+          atlas = json.load(open(RP / "textures/item_texture.json", encoding="utf-8"))
           for key, entry in atlas.get("texture_data", {}).items():
               texture = entry.get("textures")
               if not texture:
                   raise SystemExit(f"Missing texture path for atlas key {key}")
-              path = pathlib.Path("resource_pack") / (texture + ".png")
+              path = RP / (texture + ".png")
               if not path.exists():
                   raise SystemExit(f"Atlas key {key} references missing file: {path}")
 
-          # Validate custom attachable texture paths.
-          for attachable_path in pathlib.Path("resource_pack/attachables").glob("*.json"):
-              data = json.load(open(attachable_path, encoding="utf-8"))
-              desc = data.get("minecraft:attachable", {}).get("description", {})
-              for name, texture in desc.get("textures", {}).items():
-                  if texture.startswith("textures/entity/"):
-                      candidate = pathlib.Path("resource_pack") / (texture + ".png")
-                      if not candidate.exists():
-                          raise SystemExit(f"Attachable {attachable_path} references missing texture: {candidate}")
-
-          # Render-controller aliases required by Mojang armor/item_default controllers.
-          for attachable_path in pathlib.Path("resource_pack/attachables").glob("*.json"):
-              data = json.load(open(attachable_path, encoding="utf-8"))
-              desc = data.get("minecraft:attachable", {}).get("description", {})
-              controllers = desc.get("render_controllers", [])
-              if "controller.render.armor" in controllers or "controller.render.item_default" in controllers:
-                  materials = desc.get("materials", {})
-                  textures = desc.get("textures", {})
-                  if "enchanted" not in materials or "enchanted" not in textures:
-                      raise SystemExit(f"Missing enchanted material/texture aliases in {attachable_path}")
-
-          # Particle textures must exist and decode.
-          for particle_path in pathlib.Path("resource_pack/particles").glob("*.json"):
+          # Existing particle texture references.
+          for particle_path in (RP / "particles").glob("*.json"):
               data = json.load(open(particle_path, encoding="utf-8"))
               texture = data.get("particle_effect", {}).get("description", {}).get("basic_render_parameters", {}).get("texture")
               if texture and texture.startswith("textures/"):
-                  candidate = pathlib.Path("resource_pack") / (texture + ".png")
-                  if not candidate.exists():
-                      raise SystemExit(f"Particle {particle_path} references missing texture: {candidate}")
+                  path = RP / (texture + ".png")
+                  if not path.exists():
+                      raise SystemExit(f"Particle {particle_path} references missing texture: {path}")
 
-          # Reject the old full-body race armor geometry that caused broken character visuals.
-          for attachable_path in pathlib.Path("resource_pack/attachables").glob("race_appearance_*.json"):
-              data = json.load(open(attachable_path, encoding="utf-8"))
-              geometry = data.get("minecraft:attachable", {}).get("description", {}).get("geometry", {}).get("default", "")
-              if geometry == "geometry.player.armor1":
-                  raise SystemExit(f"Old full-body race geometry still present in {attachable_path}")
-
-          for old_aura in [
-              "resource_pack/particles/aura_body.particle.json",
-              "resource_pack/particles/aura_rise.particle.json",
-              "resource_pack/particles/aura_burst.particle.json",
-          ]:
-              if pathlib.Path(old_aura).exists():
-                  raise SystemExit(f"Old aura particle returned: {old_aura}")
-
-          # Validate Dragon Breakers custom UI texture paths.
-          for ui_path in pathlib.Path("resource_pack/ui").glob("*.json"):
-              data = ui_path.read_text(encoding="utf-8")
-              for marker in [
-                  "textures/ui/dragon_breakers/db_button",
-                  "textures/ui/dragon_breakers/db_button_hover",
-                  "textures/ui/dragon_breakers/db_button_pressed",
-                  "textures/ui/dragon_breakers/db_panel",
-                  "textures/ui/dragon_breakers/db_hud_panel",
-                  "textures/ui/dragon_breakers/db_slot_panel",
-              ]:
-                  if marker in data:
-                      candidate = pathlib.Path("resource_pack") / (marker + ".png")
-                      if not candidate.exists():
-                          raise SystemExit(f"UI {ui_path} references missing texture: {candidate}")
-
-          # Required v0.6.5 system assets.
-          required = [
-              "behavior_pack/items/technique_launcher.json",
-              "behavior_pack/scripts/appearance.js",
-              "behavior_pack/scripts/charging.js",
-              "behavior_pack/scripts/progression.js",
-              "resource_pack/attachables/technique_launcher.json",
-              "resource_pack/attachables/menu.json",
-              "resource_pack/models/entity/empty.geo.json",
-              "resource_pack/textures/items/technique_launcher.png",
-              "resource_pack/textures/entity/transparent.png",
-              "resource_pack/textures/particle/aura_flame.png",
-              "resource_pack/textures/particle/kamehameha_beam.png",
-              "resource_pack/particles/aura_blue_flame.particle.json",
-              "resource_pack/particles/aura_gold_flame.particle.json",
-              "resource_pack/particles/aura_violet_flame.particle.json",
-              "resource_pack/particles/aura_green_flame.particle.json",
-              "resource_pack/particles/aura_blue_spark.particle.json",
-              "resource_pack/particles/aura_gold_spark.particle.json",
-              "resource_pack/particles/aura_violet_spark.particle.json",
-              "resource_pack/particles/aura_green_spark.particle.json",
-              "resource_pack/particles/spirit_bomb_orb.particle.json",
-              "resource_pack/particles/spirit_bomb_impact.particle.json",
-          ]
-          for required_path in required:
-              if not pathlib.Path(required_path).exists():
-                  raise SystemExit(f"Missing v0.6.5 required file: {required_path}")
-
-          menu_js = pathlib.Path("behavior_pack/scripts/menu.js").read_text(encoding="utf-8")
-          player_data_js = pathlib.Path("behavior_pack/scripts/playerData.js").read_text(encoding="utf-8")
-
-          if "Race selected:" in menu_js or "Fighter setup complete!" in menu_js:
-              raise SystemExit("Setup confirmation chat spam returned")
-          if "ensureAppearanceSetup" not in menu_js or "appearanceRevision" not in player_data_js:
-              raise SystemExit("Appearance setup flow missing")
-          if "Aura Style •" not in menu_js:
-              raise SystemExit("Aura Style control missing from Settings")
-
-          if '.button("§fCharacter"' in menu_js or "characterMenu(" in menu_js:
-              raise SystemExit("Character menu entry/function returned in v0.6.5")
-          if "ensureRaceCustomization" not in menu_js:
-              raise SystemExit("Race customization flow missing")
-
-          ui_defs = json.load(open("resource_pack/ui/_ui_defs.json", encoding="utf-8"))
-          for entry in ui_defs.get("ui_defs", []):
-              path = pathlib.Path("resource_pack") / entry
-              if not path.exists():
-                  raise SystemExit(f"_ui_defs references missing file: {path}")
-
-          banned = ("heart_rend", "hunger_rend")
-          for path in pathlib.Path("resource_pack/ui").rglob("*.json"):
-              text = path.read_text(encoding="utf-8")
-              for token in banned:
-                  if token in text:
-                      raise SystemExit(f"Old invalid HUD token {token} found in {path}")
-
-          print("Dragon Breakers validation passed")
+          print("Dragon Breakers v0.7.0 validation passed")
           PY
 
       - name: Build mcaddon
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.6.5_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.7.0_PLAYER_RENDERER_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -243,7 +232,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.6.5_TEST
-          path: Dragon_Breakers_v0.6.5_TEST.mcaddon
+          name: Dragon_Breakers_v0.7.0_PLAYER_RENDERER_TEST
+          path: Dragon_Breakers_v0.7.0_PLAYER_RENDERER_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
