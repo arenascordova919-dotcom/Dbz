@@ -21,7 +21,9 @@ const DEFAULTS = Object.freeze({
   skill3: "Spirit Bomb",
   skill4: "Empty",
   characterCreated: 0,
-  creationRevision: 0
+  creationRevision: 0,
+  terrainMode: "Low",
+  auraEnabled: 1
 });
 
 const key = (name) => `dbz:${name}`;
