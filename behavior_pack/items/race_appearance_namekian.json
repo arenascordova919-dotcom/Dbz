@@ -9,11 +9,7 @@
       "minecraft:display_name": {
         "value": "Namekian Appearance"
       },
-      "minecraft:icon": "race_namekian_icon",
-      "minecraft:wearable": {
-        "slot": "slot.armor.head"
-      },
-      "minecraft:keep_on_death": {}
+      "minecraft:icon": "race_namekian_icon"
     }
   }
 }
