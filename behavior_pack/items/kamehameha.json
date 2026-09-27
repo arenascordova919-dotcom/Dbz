@@ -1,0 +1,18 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "dbz:kamehameha",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:icon": "ki_blast",
+      "minecraft:display_name": {
+        "value": "Kamehameha"
+      }
+    }
+  }
+}
