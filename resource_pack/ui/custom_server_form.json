@@ -1,0 +1,75 @@
+{
+  "namespace": "custom_server_form",
+  "background": {
+    "type": "image",
+    "texture": "textures/ui/dragon_breakers/db_panel",
+    "alpha": 0.98
+  },
+  "button@common_buttons.light_text_button": {
+    "size": [
+      "100%",
+      "20px"
+    ],
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+    "$pressed_button_name": "button.form_button_click",
+    "$button_type_panel": "common.empty_panel",
+    "$border_visible": false,
+    "bindings": [
+      {
+        "binding_type": "collection_details",
+        "binding_collection_name": "form_buttons"
+      },
+      {
+        "binding_name": "#form_button_text",
+        "binding_type": "collection",
+        "binding_collection_name": "form_buttons"
+      }
+    ]
+  },
+  "text_button@custom_server_form.button": {
+    "$button_type_panel": "custom_server_form.button_label"
+  },
+  "button_label": {
+    "type": "label",
+    "size": [
+      "100% - 4px",
+      "100% - 4px"
+    ],
+    "text": "#form_button_text",
+    "color": [
+      1,
+      0.86,
+      0.3
+    ],
+    "text_alignment": "center",
+    "shadow": true,
+    "bindings": [
+      {
+        "binding_name": "#form_button_text",
+        "binding_type": "collection",
+        "binding_collection_name": "form_buttons"
+      }
+    ]
+  },
+  "arrow_button@custom_server_form.button": {
+    "size": [
+      28,
+      24
+    ],
+    "$button_type_panel": "custom_server_form.button_label",
+    "$default_button_texture": "textures/ui/dragon_breakers/db_button",
+    "$hover_button_texture": "textures/ui/dragon_breakers/db_button_hover",
+    "$pressed_button_texture": "textures/ui/dragon_breakers/db_button_pressed"
+  },
+  "accept_button@custom_server_form.button": {
+    "size": [
+      "100%",
+      26
+    ],
+    "$button_type_panel": "custom_server_form.button_label",
+    "$default_button_texture": "textures/ui/dragon_breakers/db_button",
+    "$hover_button_texture": "textures/ui/dragon_breakers/db_button_hover",
+    "$pressed_button_texture": "textures/ui/dragon_breakers/db_button_pressed"
+  }
+}
