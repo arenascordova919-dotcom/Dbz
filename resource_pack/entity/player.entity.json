@@ -59,7 +59,8 @@
           "variable.is_holding_right = 0.0;",
           "variable.is_blinking = 0.0;",
           "variable.last_blink_time = 0.0;",
-          "variable.hand_bob = 0.0;"
+          "variable.hand_bob = 0.0;",
+          "variable.melee_spear_equipped = 0.0;"
         ],
         "pre_animation": [
           "variable.helmet_layer_visible = !query.has_head_gear;",
@@ -83,7 +84,8 @@
           "variable.dbz_hair_style = query.is_in_ui ? 0.0 : query.property('dbz:hair_style');",
           "variable.dbz_hair_color = query.is_in_ui ? 0.0 : query.property('dbz:hair_color');",
           "variable.dbz_eye_style = query.is_in_ui ? 0.0 : query.property('dbz:eye_style');",
-          "variable.dbz_has_tail = query.is_in_ui ? 0.0 : query.property('dbz:has_tail');"
+          "variable.dbz_has_tail = query.is_in_ui ? 0.0 : query.property('dbz:has_tail');",
+          "variable.melee_spear_equipped = 0.0;"
         ],
         "animate": [
           "root",
