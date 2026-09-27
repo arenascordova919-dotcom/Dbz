@@ -4,7 +4,6 @@ import { startResourceRegeneration } from "./resources.js";
 import { registerCombat } from "./combat.js";
 import { openMainMenu } from "./menu.js";
 import { startHudBridge } from "./hudBridge.js";
-import { registerTechniqueControls } from "./controls.js";
 
 world.afterEvents.playerSpawn.subscribe(({ player }) => initializePlayer(player));
 
@@ -17,6 +16,5 @@ system.run(() => {
   startResourceRegeneration();
   startHudBridge();
   registerCombat();
-  registerTechniqueControls();
   console.warn("[Dragon Breakers] v0.5.0 loaded.");
 });
