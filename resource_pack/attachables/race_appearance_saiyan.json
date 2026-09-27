@@ -1,0 +1,26 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "dbz:race_appearance_saiyan",
+      "item": {
+        "dbz:race_appearance_saiyan": "query.owner_identifier == 'minecraft:player'"
+      },
+      "materials": {
+        "default": "armor"
+      },
+      "textures": {
+        "default": "textures/entity/race_saiyan"
+      },
+      "geometry": {
+        "default": "geometry.player.armor1"
+      },
+      "scripts": {
+        "parent_setup": "variable.helmet_layer_visible = 0.0; variable.chest_layer_visible = 0.0; variable.leg_layer_visible = 0.0; variable.boot_layer_visible = 0.0;"
+      },
+      "render_controllers": [
+        "controller.render.armor"
+      ]
+    }
+  }
+}
