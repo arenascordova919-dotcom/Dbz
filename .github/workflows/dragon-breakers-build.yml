@@ -42,7 +42,7 @@ jobs:
 
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
-          if bp["header"]["version"] != [0, 5, 2]:
+          if bp["header"]["version"] != [0, 6, 0]:
               raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
 
           for manifest in (bp, rp):
@@ -67,6 +67,29 @@ jobs:
               if not path.exists():
                   raise SystemExit(f"Atlas key {key} references missing file: {path}")
 
+          # Validate custom attachable texture paths.
+          for attachable_path in pathlib.Path("resource_pack/attachables").glob("*.json"):
+              data = json.load(open(attachable_path, encoding="utf-8"))
+              desc = data.get("minecraft:attachable", {}).get("description", {})
+              for name, texture in desc.get("textures", {}).items():
+                  if texture.startswith("textures/entity/"):
+                      candidate = pathlib.Path("resource_pack") / (texture + ".png")
+                      if not candidate.exists():
+                          raise SystemExit(f"Attachable {attachable_path} references missing texture: {candidate}")
+
+          # Required v0.6.0 system assets.
+          required = [
+              "behavior_pack/items/technique_launcher.json",
+              "behavior_pack/scripts/appearance.js",
+              "resource_pack/attachables/technique_launcher.json",
+              "resource_pack/models/entity/empty.geo.json",
+              "resource_pack/textures/items/technique_launcher.png",
+              "resource_pack/textures/entity/transparent.png",
+          ]
+          for required_path in required:
+              if not pathlib.Path(required_path).exists():
+                  raise SystemExit(f"Missing v0.6.0 required file: {required_path}")
+
           ui_defs = json.load(open("resource_pack/ui/_ui_defs.json", encoding="utf-8"))
           for entry in ui_defs.get("ui_defs", []):
               path = pathlib.Path("resource_pack") / entry
@@ -87,7 +110,7 @@ jobs:
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.5.2_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.6.0_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -106,7 +129,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.5.2_TEST
-          path: Dragon_Breakers_v0.5.2_TEST.mcaddon
+          name: Dragon_Breakers_v0.6.0_TEST
+          path: Dragon_Breakers_v0.6.0_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
