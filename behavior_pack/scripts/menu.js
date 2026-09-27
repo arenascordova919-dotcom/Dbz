@@ -11,6 +11,9 @@ import {
 } from "./playerData.js";
 
 const creationOpen = new Set();
+const customizationOpen = new Set();
+const FOCUSES = ["Balanced", "Power", "Speed", "Ki"];
+const AURA_STYLES = ["Blue", "Gold", "Violet", "Green"];
 
 const RACES = [
   {
@@ -53,7 +56,7 @@ function applyRaceStats(player, race) {
 
 export async function ensureCharacterCreation(player) {
   if (!player) return;
-  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 2) return;
+  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 2) return ensureRaceCustomization(player);
   if (creationOpen.has(player.id)) return;
 
   creationOpen.add(player.id);
@@ -96,7 +99,8 @@ export async function ensureCharacterCreation(player) {
         applyRaceStats(player, race);
         setNumber(player, "characterCreated", 1);
         setNumber(player, "creationRevision", 2);
-        player.sendMessage(`§aCharacter created! Race: §f${race.id}`);
+        player.sendMessage(`§aRace selected: §f${race.id}`);
+        system.runTimeout(() => ensureRaceCustomization(player), 2);
         break;
       }
     }
@@ -112,6 +116,65 @@ export async function ensureCharacterCreation(player) {
   }
 }
 
+export async function ensureRaceCustomization(player) {
+  if (!player || getNumber(player, "creationRevision") >= 3) return;
+  if (customizationOpen.has(player.id)) return;
+
+  customizationOpen.add(player.id);
+  let focus = getString(player, "focus");
+  let aura = getString(player, "auraStyle");
+
+  if (!FOCUSES.includes(focus)) focus = "Balanced";
+  if (!AURA_STYLES.includes(aura)) aura = "Blue";
+
+  try {
+    while (getNumber(player, "creationRevision") < 3) {
+      const race = getString(player, "race");
+      const form = new ActionFormData()
+        .title("§lDRAGON BREAKERS")
+        .header("§6RACE SETUP")
+        .label(
+          `§fRace: §e${race}\n` +
+          `§fCombat Focus: §6${focus}\n` +
+          `§fAura Style: §b${aura}\n\n` +
+          "§7Power = stronger techniques • Speed = shorter cooldowns • Ki = lower Ki costs • Balanced = neutral."
+        )
+        .button(`§6Combat Focus • ${focus}`, "textures/items/ki_blast")
+        .button(`§bAura Style • ${aura}`, "textures/items/kamehameha")
+        .button("§a✔  FINISH SETUP", "textures/items/race_saiyan_icon");
+
+      const result = await form.show(player);
+      if (result.canceled || result.selection === undefined) break;
+
+      if (result.selection === 0) {
+        focus = FOCUSES[(FOCUSES.indexOf(focus) + 1) % FOCUSES.length];
+        continue;
+      }
+      if (result.selection === 1) {
+        aura = AURA_STYLES[(AURA_STYLES.indexOf(aura) + 1) % AURA_STYLES.length];
+        continue;
+      }
+      if (result.selection === 2) {
+        setString(player, "focus", focus);
+        setString(player, "auraStyle", aura);
+        setNumber(player, "creationRevision", 3);
+        player.sendMessage(`§aFighter setup complete! §7Focus: §f${focus} §7• Aura: §f${aura}`);
+        break;
+      }
+    }
+  } catch (error) {
+    console.warn("[Dragon Breakers] Race customization failed: " + error);
+  } finally {
+    customizationOpen.delete(player.id);
+  }
+}
+
+export async function ensureCharacterSetup(player) {
+  const revision = getNumber(player, "creationRevision");
+  if (revision < 2) return ensureCharacterCreation(player);
+  if (revision < 3) return ensureRaceCustomization(player);
+}
+
 async function playerStatus(player) {
   const race = getString(player, "race");
   const level = getNumber(player, "level");
@@ -119,10 +182,14 @@ async function playerStatus(player) {
   const mastery = getNumber(player, "mastery");
   const tp = getNumber(player, "tp");
   const pl = getPowerLevel(player);
+  const xp = getNumber(player, "xp");
+  const focus = getString(player, "focus");
+  const auraStyle = getString(player, "auraStyle");
 
   const body =
     `§6Race: §f${race}\n§6Level: §f${level}\n§6Form: §f${formName}\n` +
-    `§6Power Level: §f${pl}\n§6TP: §f${tp}\n§6Mastery: §f${mastery}\n\n` +
+    `§6Power Level: §f${pl}\n§6XP: §f${Math.floor(xp)}\n§6TP: §f${tp}\n§6Mastery: §f${mastery}\n` +
+    `§6Focus: §f${focus}   §6Aura: §f${auraStyle}\n\n` +
     `§cSTR §f${getNumber(player, "str")}   §bDEX §f${getNumber(player, "dex")}\n` +
     `§aCON §f${getNumber(player, "con")}   §dWIL §f${getNumber(player, "wil")}\n` +
     `§eMND §f${getNumber(player, "mnd")}   §9SPI §f${getNumber(player, "spi")}`;
@@ -163,13 +230,15 @@ async function settingsMenu(player) {
   const modes = ["Off", "Low", "Full"];
   const current = getString(player, "terrainMode");
   const aura = getNumber(player, "auraEnabled") >= 1;
+  const auraStyle = getString(player, "auraStyle");
 
   const result = await new ActionFormData()
     .title("§lDRAGON BREAKERS")
     .header("§6SETTINGS")
     .label(
       `§fTerrain Destruction: §e${current}\n` +
-      `§fCharging Aura: ${aura ? "§aON" : "§cOFF"}\n\n` +
+      `§fCharging Aura: ${aura ? "§aON" : "§cOFF"}\n` +
+      `§fAura Style: §b${auraStyle}\n\n` +
       "§7Low is recommended for mobile. Full creates larger craters and may cost more performance."
     )
     .button(`§6Terrain Destruction • ${current}`, "textures/items/ki_blast")
@@ -190,25 +259,13 @@ async function settingsMenu(player) {
     return settingsMenu(player);
   }
 
-  if (result.selection === 2) return openMainMenu(player);
-}
-
-async function characterMenu(player) {
-  const race = getString(player, "race");
-  const result = await new ActionFormData()
-    .title("§lDRAGON BREAKERS")
-    .header("§6CHARACTER")
-    .label(`§fRace: §e${race}\n§7Race stats are saved to your character. Re-open race selection only if you want to change your race.`)
-    .button("§6Race Selection", "textures/items/race_saiyan_icon")
-    .button("§8Back")
-    .show(player);
-
-  if (result.canceled || result.selection === undefined) return;
-  if (result.selection === 0) {
-    setNumber(player, "creationRevision", 1);
-    return ensureCharacterCreation(player);
+  if (result.selection === 2) {
+    const currentIndex = Math.max(0, AURA_STYLES.indexOf(auraStyle));
+    setString(player, "auraStyle", AURA_STYLES[(currentIndex + 1) % AURA_STYLES.length]);
+    return settingsMenu(player);
   }
-  if (result.selection === 1) return openMainMenu(player);
+
+  if (result.selection === 3) return openMainMenu(player);
 }
 
 async function placeholder(player, title, text) {
@@ -222,7 +279,7 @@ async function placeholder(player, title, text) {
 }
 
 export async function openMainMenu(player) {
-  if (getNumber(player, "creationRevision") < 2) return ensureCharacterCreation(player);
+  if (getNumber(player, "creationRevision") < 3) return ensureCharacterSetup(player);
 
   const race = getString(player, "race");
   const level = getNumber(player, "level");
@@ -233,7 +290,6 @@ export async function openMainMenu(player) {
     .header("§6MAIN MENU")
     .label(`§fRace: §e${race}   §fLV: §e${level}   §fPL: §6${pl}`)
     .button("§6Player Status", "textures/items/race_saiyan_icon")
-    .button("§fCharacter", "textures/items/race_earthling_icon")
     .button("§6Transformations", "textures/items/spirit_bomb")
     .button("§bTechniques", "textures/items/kamehameha")
     .button("§eQuests", "textures/items/ki_blast")
@@ -243,9 +299,8 @@ export async function openMainMenu(player) {
   const result = await form.show(player);
   if (result.canceled || result.selection === undefined) return;
   if (result.selection === 0) return playerStatus(player);
-  if (result.selection === 1) return characterMenu(player);
-  if (result.selection === 2) return placeholder(player, "TRANSFORMATIONS", "Transformation progression is the next major system.");
-  if (result.selection === 3) return specials(player);
-  if (result.selection === 4) return placeholder(player, "QUESTS", "Quest progression will be added after combat stabilization.");
-  if (result.selection === 5) return settingsMenu(player);
+  if (result.selection === 1) return placeholder(player, "TRANSFORMATIONS", "Transformation progression is the next major system.");
+  if (result.selection === 2) return specials(player);
+  if (result.selection === 3) return placeholder(player, "QUESTS", "Quest progression will be added after combat stabilization.");
+  if (result.selection === 4) return settingsMenu(player);
 }
