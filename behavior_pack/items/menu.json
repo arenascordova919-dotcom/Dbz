@@ -10,7 +10,7 @@
     "components": {
       "minecraft:max_stack_size": 1,
       "minecraft:display_name": {
-        "value": "Dragon Breakers Menu"
+        "value": " "
       },
       "minecraft:icon": "dbz_menu"
     }
