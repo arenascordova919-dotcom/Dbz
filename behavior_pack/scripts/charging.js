@@ -11,8 +11,7 @@ function safeParticle(dimension, id, location) {
 function isHoldingLauncher(player) {
   try {
     const equippable = player.getComponent("minecraft:equippable");
-    const held = equippable?.getEquipment(EquipmentSlot.Mainhand);
-    return held?.typeId === "dbz:technique_launcher";
+    return equippable?.getEquipment(EquipmentSlot.Mainhand)?.typeId === "dbz:technique_launcher";
   } catch {
     return false;
   }
@@ -20,29 +19,30 @@ function isHoldingLauncher(player) {
 
 function spawnAura(player, pulse) {
   try {
-    const base = player.location;
-    const dimension = player.dimension;
-    const angles = [0, Math.PI / 2, Math.PI, Math.PI * 1.5];
-    const heights = [0.25, 0.85, 1.45];
+    const p = player.location;
+    const d = player.dimension;
+    const sway = Math.sin(pulse * 0.45) * 0.08;
 
-    for (const y of heights) {
-      for (const angle of angles) {
-        const radius = y > 1.2 ? 0.42 : 0.55;
-        safeParticle(dimension, "dbz:aura_body", {
-          x: base.x + Math.cos(angle + pulse * 0.22) * radius,
-          y: base.y + y,
-          z: base.z + Math.sin(angle + pulse * 0.22) * radius
-        });
-      }
+    // Slim vertical energy streaks around the silhouette.
+    const streaks = [
+      [-0.48, 0.35, 0.00], [0.48, 0.35, 0.00],
+      [-0.42, 0.95, 0.05], [0.42, 0.95, -0.05],
+      [-0.30, 1.48, 0.00], [0.30, 1.48, 0.00],
+      [0.00, 1.90, 0.00]
+    ];
+
+    for (let i = 0; i < streaks.length; i++) {
+      const [x, y, z] = streaks[i];
+      safeParticle(d, i < 4 ? "dbz:aura_body" : "dbz:aura_rise", {
+        x: p.x + x + (i % 2 === 0 ? sway : -sway),
+        y: p.y + y,
+        z: p.z + z
+      });
     }
 
-    // Shoulder / head energy wisps.
-    safeParticle(dimension, "dbz:aura_rise", { x: base.x + 0.34, y: base.y + 1.35, z: base.z });
-    safeParticle(dimension, "dbz:aura_rise", { x: base.x - 0.34, y: base.y + 1.35, z: base.z });
-    safeParticle(dimension, "dbz:aura_rise", { x: base.x, y: base.y + 1.85, z: base.z });
-
-    if (pulse % 6 === 0) {
-      safeParticle(dimension, "dbz:aura_burst", { x: base.x, y: base.y + 0.95, z: base.z });
+    // A short pulse around the whole body, not a stack of orbs.
+    if (pulse % 10 === 0) {
+      safeParticle(d, "dbz:aura_burst", { x: p.x, y: p.y + 0.92, z: p.z });
     }
   } catch {}
 }
@@ -50,13 +50,13 @@ function spawnAura(player, pulse) {
 export function startChargingSystem() {
   system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
-      const shouldCharge =
+      const charging =
         getNumber(player, "characterCreated") >= 1 &&
         getNumber(player, "auraEnabled") >= 1 &&
         player.isSneaking &&
         isHoldingLauncher(player);
 
-      if (!shouldCharge) {
+      if (!charging) {
         chargingState.delete(player.id);
         continue;
       }
