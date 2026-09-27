@@ -23,11 +23,11 @@ async function specials(player) {
   const form = new ActionFormData()
     .title("§lDRAGON BREAKERS • SPECIALS")
     .body(`§7Select the active technique slot.\n§fCurrent: §6Slot ${loadout.selectedSlot}\n\n§71  §b${loadout.slots[0]}\n§72  §e${loadout.slots[1]}\n§73  §5${loadout.slots[2]}\n§74  §8${loadout.slots[3]}`)
-    .button("§6Slot 1 • Kamehameha")
-    .button("§6Slot 2 • Ki Blast")
-    .button("§6Slot 3 • Spirit Bomb")
-    .button("§6Slot 4 • Empty")
-    .button("§8Back");
+    .button("§6Slot 1 • Kamehameha", "textures/items/kamehameha")
+    .button("§6Slot 2 • Ki Blast", "textures/items/ki_blast")
+    .button("§6Slot 3 • Spirit Bomb", "textures/items/ki_blast")
+    .button("§6Slot 4 • Empty", "textures/items/dbz_menu")
+    .button("§8Back", "textures/items/dbz_menu");
   const result = await form.show(player);
   if (result.canceled || result.selection === undefined) return;
   if (result.selection >= 0 && result.selection <= 3) {
@@ -42,10 +42,10 @@ export async function openMainMenu(player) {
   const form = new ActionFormData()
     .title("§lDRAGON BREAKERS")
     .body(`§fRace: §e${race}\n§fLevel: §e${level}\n\n§7Dragon Breakers v0.5 • Character & Techniques`)
-    .button("§6Races")
-    .button("§bSpecials")
-    .button("§fCharacter")
-    .button("§cClose");
+    .button("§6Races", "textures/items/dbz_menu")
+    .button("§bSpecials", "textures/items/kamehameha")
+    .button("§fCharacter", "textures/items/dbz_menu")
+    .button("§cClose", "textures/items/dbz_menu");
   const result = await form.show(player);
   if (result.canceled) return;
   if (result.selection === 0) return chooseRace(player);
