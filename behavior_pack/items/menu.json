@@ -3,12 +3,16 @@
   "minecraft:item": {
     "description": {
       "identifier": "dbz:menu",
-      "menu_category": { "category": "items" }
+      "menu_category": {
+        "category": "items"
+      }
     },
     "components": {
       "minecraft:max_stack_size": 1,
       "minecraft:icon": "dbz_menu",
-      "minecraft:display_name": { "value": "Dragon Ball Menu" }
+      "minecraft:display_name": {
+        "value": "Dragon Breakers Menu"
+      }
     }
   }
 }
