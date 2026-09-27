@@ -10,17 +10,6 @@ const RACE_ITEMS = Object.freeze({
 
 const PREFIX = "dbz:race_appearance_";
 
-function firstEmptyInventorySlot(player) {
-  try {
-    const inventory = player.getComponent("minecraft:inventory")?.container;
-    if (!inventory) return -1;
-    for (let i = 0; i < inventory.size; i++) {
-      if (!inventory.getItem(i)) return i;
-    }
-  } catch {}
-  return -1;
-}
-
 export function applyRaceAppearance(player) {
   if (!player || getNumber(player, "characterCreated") < 1) return false;
 
@@ -35,14 +24,8 @@ export function applyRaceAppearance(player) {
     const current = equippable.getEquipment(EquipmentSlot.Head);
     if (current?.typeId === desired) return true;
 
-    if (current && !current.typeId.startsWith(PREFIX)) {
-      const inventory = player.getComponent("minecraft:inventory")?.container;
-      const empty = firstEmptyInventorySlot(player);
-      if (!inventory || empty < 0) {
-        return false;
-      }
-      inventory.setItem(empty, current);
-    }
+    // Never steal or move a real helmet. Normal armor always wins.
+    if (current && !current.typeId.startsWith(PREFIX)) return false;
 
     equippable.setEquipment(EquipmentSlot.Head, new ItemStack(desired, 1));
     return true;
