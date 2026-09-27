@@ -19,8 +19,7 @@ function isHoldingLauncher(player) {
 
 function styleKey(player) {
   const style = getString(player, "auraStyle").toLowerCase();
-  if (["blue","gold","violet","green"].includes(style)) return style;
-  return "blue";
+  return ["blue","gold","violet","green"].includes(style) ? style : "blue";
 }
 
 function spawnAura(player, pulse) {
@@ -30,19 +29,27 @@ function spawnAura(player, pulse) {
     const style = styleKey(player);
     const flame = `dbz:aura_${style}_flame`;
     const spark = `dbz:aura_${style}_spark`;
-    const sway = Math.sin(pulse * 0.38) * 0.10;
+    const sway = Math.sin(pulse * 0.32) * 0.07;
+    const wave = Math.cos(pulse * 0.24) * 0.05;
 
-    // Two tall flame sheets hug the player instead of surrounding them with balls.
-    safeParticle(d, flame, { x: p.x - 0.23 + sway, y: p.y + 0.88, z: p.z });
-    safeParticle(d, flame, { x: p.x + 0.23 - sway, y: p.y + 0.88, z: p.z });
+    // Layered flames hug the torso instead of making two giant flat walls.
+    safeParticle(d, flame, { x: p.x, y: p.y + 0.78, z: p.z - 0.10 });
+    safeParticle(d, flame, { x: p.x - 0.30 + sway, y: p.y + 0.72, z: p.z + 0.03 });
+    safeParticle(d, flame, { x: p.x + 0.30 - sway, y: p.y + 0.72, z: p.z + 0.03 });
 
-    // Rising shoulder/head streaks.
-    safeParticle(d, spark, { x: p.x - 0.34, y: p.y + 1.20, z: p.z });
-    safeParticle(d, spark, { x: p.x + 0.34, y: p.y + 1.20, z: p.z });
-    if (pulse % 2 === 0) safeParticle(d, spark, { x: p.x, y: p.y + 1.72, z: p.z });
+    // Smaller lower-body flames give a continuous silhouette.
+    if (pulse % 2 === 0) {
+      safeParticle(d, flame, { x: p.x - 0.17, y: p.y + 0.28, z: p.z + 0.05 });
+      safeParticle(d, flame, { x: p.x + 0.17, y: p.y + 0.28, z: p.z + 0.05 });
+    }
 
-    // Short extra flare while charging for a stronger DBC-like pulse.
-    if (pulse % 10 === 0) {
+    // Shoulder/head energy sparks rise above the model.
+    safeParticle(d, spark, { x: p.x - 0.30 + wave, y: p.y + 1.18, z: p.z });
+    safeParticle(d, spark, { x: p.x + 0.30 - wave, y: p.y + 1.18, z: p.z });
+    safeParticle(d, spark, { x: p.x, y: p.y + 1.72, z: p.z });
+
+    // Intermittent extra core flame gives the charge a breathing/pulsing feel.
+    if (pulse % 8 === 0) {
       safeParticle(d, flame, { x: p.x, y: p.y + 0.90, z: p.z + 0.08 });
     }
   } catch {}
