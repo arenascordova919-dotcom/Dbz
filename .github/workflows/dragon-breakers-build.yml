@@ -174,8 +174,8 @@ jobs:
           appearance_ui = (RP / "ui/appearance_creator_form.json").read_text(encoding="utf-8")
           if "dbz_race_select" not in server_form or "dbz_appearance" not in server_form:
               raise SystemExit("Custom race/appearance server-form routing missing")
-          if "live_player_renderer" not in race_ui or "live_player_renderer" not in appearance_ui:
-              raise SystemExit("Live player preview missing from creator UI")
+          if "live_player_renderer" in race_ui or "live_player_renderer" in appearance_ui:
+              raise SystemExit("Unsafe live player renderer returned to creator UI")
 
           # Script must sync render properties and appearance UI must use dedicated titles.
           renderer_js = (BP / "scripts/playerRenderer.js").read_text(encoding="utf-8")
