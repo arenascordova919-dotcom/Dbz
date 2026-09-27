@@ -8,21 +8,21 @@
     ],
     "controls": [
       {
-        "player_portrait_frame": {
+        "brand_badge": {
           "type": "panel",
           "anchor_from": "top_left",
           "anchor_to": "top_left",
           "offset": [
-            8,
-            8
+            6,
+            6
           ],
           "size": [
-            36,
-            36
+            26,
+            26
           ],
           "controls": [
             {
-              "gold_border": {
+              "frame": {
                 "type": "image",
                 "texture": "textures/ui/dragon_breakers/db_hud_panel",
                 "size": [
@@ -33,20 +33,19 @@
               }
             },
             {
-              "emblem": {
+              "icon": {
                 "type": "image",
                 "texture": "textures/items/dbz_menu",
                 "size": [
-                  28,
-                  28
+                  20,
+                  20
                 ],
                 "anchor_from": "center",
                 "anchor_to": "center",
                 "layer": 2
               }
             }
-          ],
-          "clips_children": true
+          ]
         }
       },
       {
@@ -56,27 +55,27 @@
           "anchor_from": "left_middle",
           "anchor_to": "left_middle",
           "offset": [
-            8,
-            8
+            6,
+            0
           ],
           "size": [
-            96,
-            80
+            26,
+            104
           ],
           "controls": [
             {
               "slot1": {
                 "type": "panel",
                 "size": [
-                  "100%",
-                  20
+                  26,
+                  26
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/dragon_breakers/db_slot_panel",
-                      "alpha": 0.88,
+                      "alpha": 0.92,
                       "size": [
                         "100%",
                         "100%"
@@ -87,29 +86,24 @@
                     "icon": {
                       "type": "image",
                       "texture": "textures/items/kamehameha",
-                      "alpha": 1,
                       "size": [
-                        16,
-                        16
+                        18,
+                        18
                       ],
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
-                      "offset": [
-                        2,
-                        0
-                      ]
+                      "anchor_from": "center",
+                      "anchor_to": "center"
                     }
                   },
                   {
-                    "label": {
+                    "number": {
                       "type": "label",
-                      "text": "§6[1] §fKamehameha",
+                      "text": "§61",
                       "font_size": "small",
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
+                      "anchor_from": "top_left",
+                      "anchor_to": "top_left",
                       "offset": [
-                        21,
-                        0
+                        2,
+                        1
                       ],
                       "shadow": true
                     }
@@ -121,15 +115,15 @@
               "slot2": {
                 "type": "panel",
                 "size": [
-                  "100%",
-                  20
+                  26,
+                  26
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/dragon_breakers/db_slot_panel",
-                      "alpha": 0.88,
+                      "alpha": 0.92,
                       "size": [
                         "100%",
                         "100%"
@@ -140,29 +134,24 @@
                     "icon": {
                       "type": "image",
                       "texture": "textures/items/ki_blast",
-                      "alpha": 1,
                       "size": [
-                        16,
-                        16
+                        18,
+                        18
                       ],
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
-                      "offset": [
-                        2,
-                        0
-                      ]
+                      "anchor_from": "center",
+                      "anchor_to": "center"
                     }
                   },
                   {
-                    "label": {
+                    "number": {
                       "type": "label",
-                      "text": "§6[2] §fKi Blast",
+                      "text": "§62",
                       "font_size": "small",
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
+                      "anchor_from": "top_left",
+                      "anchor_to": "top_left",
                       "offset": [
-                        21,
-                        0
+                        2,
+                        1
                       ],
                       "shadow": true
                     }
@@ -174,15 +163,15 @@
               "slot3": {
                 "type": "panel",
                 "size": [
-                  "100%",
-                  20
+                  26,
+                  26
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/dragon_breakers/db_slot_panel",
-                      "alpha": 0.88,
+                      "alpha": 0.92,
                       "size": [
                         "100%",
                         "100%"
@@ -193,29 +182,24 @@
                     "icon": {
                       "type": "image",
                       "texture": "textures/items/spirit_bomb",
-                      "alpha": 1,
                       "size": [
-                        16,
-                        16
+                        18,
+                        18
                       ],
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
-                      "offset": [
-                        2,
-                        0
-                      ]
+                      "anchor_from": "center",
+                      "anchor_to": "center"
                     }
                   },
                   {
-                    "label": {
+                    "number": {
                       "type": "label",
-                      "text": "§6[3] §fSpirit Bomb",
+                      "text": "§63",
                       "font_size": "small",
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
+                      "anchor_from": "top_left",
+                      "anchor_to": "top_left",
                       "offset": [
-                        21,
-                        0
+                        2,
+                        1
                       ],
                       "shadow": true
                     }
@@ -227,15 +211,15 @@
               "slot4": {
                 "type": "panel",
                 "size": [
-                  "100%",
-                  20
+                  26,
+                  26
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
                       "texture": "textures/ui/dragon_breakers/db_slot_panel",
-                      "alpha": 0.88,
+                      "alpha": 0.55,
                       "size": [
                         "100%",
                         "100%"
@@ -243,16 +227,12 @@
                     }
                   },
                   {
-                    "label": {
+                    "number": {
                       "type": "label",
-                      "text": "§6[4] §8Empty",
+                      "text": "§84",
                       "font_size": "small",
-                      "anchor_from": "left_middle",
-                      "anchor_to": "left_middle",
-                      "offset": [
-                        21,
-                        0
-                      ],
+                      "anchor_from": "center",
+                      "anchor_to": "center",
                       "shadow": true
                     }
                   }
