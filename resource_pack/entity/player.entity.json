@@ -36,7 +36,10 @@
         "dbz_arcosian_0": "textures/entity/dragon_breakers/arcosian_0",
         "dbz_arcosian_1": "textures/entity/dragon_breakers/arcosian_1",
         "dbz_arcosian_2": "textures/entity/dragon_breakers/arcosian_2",
-        "dbz_arcosian_3": "textures/entity/dragon_breakers/arcosian_3"
+        "dbz_arcosian_3": "textures/entity/dragon_breakers/arcosian_3",
+        "dbz_eyes_0": "textures/entity/dragon_breakers/eyes_0",
+        "dbz_eyes_1": "textures/entity/dragon_breakers/eyes_1",
+        "dbz_eyes_2": "textures/entity/dragon_breakers/eyes_2"
       },
       "geometry": {
         "default": "geometry.humanoid.custom",
@@ -47,7 +50,8 @@
         "dbz_hair_3": "geometry.dbz.hair.3",
         "dbz_saiyan_tail": "geometry.dbz.saiyan_tail",
         "dbz_namekian_features": "geometry.dbz.namekian_features",
-        "dbz_arcosian_features": "geometry.dbz.arcosian_features"
+        "dbz_arcosian_features": "geometry.dbz.arcosian_features",
+        "dbz_eyes": "geometry.dbz.eyes"
       },
       "scripts": {
         "scale": "0.9375",
@@ -176,6 +180,9 @@
         },
         {
           "controller.render.dbz.hair": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && (query.property('dbz:race') == 'earthling' || query.property('dbz:race') == 'saiyan')"
+        },
+        {
+          "controller.render.dbz.eyes": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && (query.property('dbz:race') == 'earthling' || query.property('dbz:race') == 'saiyan')"
         },
         {
           "controller.render.dbz.saiyan_tail": "!variable.is_first_person && !variable.map_face_icon && !query.is_spectator && query.property('dbz:race') == 'saiyan' && query.property('dbz:has_tail')"
