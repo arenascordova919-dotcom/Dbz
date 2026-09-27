@@ -161,6 +161,15 @@ jobs:
           rc = json.load(open(RP / "render_controllers/dragon_breakers_player.render_controllers.json", encoding="utf-8"))
           if len(rc.get("render_controllers", {})) < 9:
               raise SystemExit("Dragon Breakers player render-controller set is incomplete")
+          rc_text = (RP / "render_controllers/dragon_breakers_player.render_controllers.json").read_text(encoding="utf-8")
+          if "q.property(" in rc_text or "query.property(" in rc_text:
+              raise SystemExit("Direct player property query remains in render controller")
+          for visual in [
+              RP / "particles/spirit_bomb_glow.particle.json",
+              RP / "particles/aura_ring.particle.json",
+          ]:
+              if not visual.exists():
+                  raise SystemExit(f"Missing v0.7.1 visual asset: {visual}")
 
           # Custom UI routing + live renderer.
           ui_defs = json.load(open(RP / "ui/_ui_defs.json", encoding="utf-8"))
