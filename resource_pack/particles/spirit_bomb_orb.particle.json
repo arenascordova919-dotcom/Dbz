@@ -5,7 +5,7 @@
       "identifier": "dbz:spirit_bomb_orb",
       "basic_render_parameters": {
         "material": "particles_add",
-        "texture": "textures/items/spirit_bomb"
+        "texture": "textures/particle/ki_blast_energy"
       }
     },
     "components": {
@@ -24,12 +24,12 @@
         ]
       },
       "minecraft:particle_lifetime_expression": {
-        "max_lifetime": 0.18
+        "max_lifetime": 0.16
       },
       "minecraft:particle_appearance_billboard": {
         "size": [
-          0.62,
-          0.62
+          1.35,
+          1.35
         ],
         "facing_camera_mode": "lookat_xyz",
         "uv": {
