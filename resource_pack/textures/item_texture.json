@@ -10,6 +10,9 @@
     },
     "kamehameha": {
       "textures": "textures/items/kamehameha"
+    },
+    "spirit_bomb": {
+      "textures": "textures/items/spirit_bomb"
     }
   }
 }
