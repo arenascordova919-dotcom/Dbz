@@ -68,5 +68,5 @@ system.run(() => {
   startHudBridge();
   registerCombat();
   system.runInterval(() => { for (const player of world.getAllPlayers()) ensureMenuSlot(player); }, 100);
-  console.warn("[Dragon Breakers] v0.5.0 loaded.");
+  console.warn("[Dragon Breakers] v0.5.1 loaded.");
 });
