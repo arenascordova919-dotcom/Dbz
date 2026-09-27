@@ -116,5 +116,5 @@ system.run(() => {
     }
   }, 100);
 
-  console.warn("[Dragon Breakers] v0.6.0 loaded.");
+  console.warn("[Dragon Breakers] v0.6.1 loaded.");
 });
