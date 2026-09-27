@@ -13,6 +13,21 @@
     },
     "spirit_bomb": {
       "textures": "textures/items/spirit_bomb"
+    },
+    "technique_launcher": {
+      "textures": "textures/items/technique_launcher"
+    },
+    "race_saiyan_icon": {
+      "textures": "textures/items/race_saiyan_icon"
+    },
+    "race_namekian_icon": {
+      "textures": "textures/items/race_namekian_icon"
+    },
+    "race_arcosian_icon": {
+      "textures": "textures/items/race_arcosian_icon"
+    },
+    "race_earthling_icon": {
+      "textures": "textures/items/race_earthling_icon"
     }
   }
 }
