@@ -57,3 +57,15 @@ export function castKiBlast(player) {
     } catch {}
   }
 }
+
+export function castSelectedTechnique(player) {
+  const selected = Math.max(1, Math.min(4, Math.floor(getNumber(player, "selectedSlot"))));
+  const skill = player.getDynamicProperty(`dbz:skill${selected}`);
+  if (skill === "Kamehameha") return castKamehameha(player);
+  if (skill === "Ki Blast") return castKiBlast(player);
+  if (skill === "Spirit Bomb") {
+    player.sendMessage("§6Spirit Bomb is not implemented yet.");
+    return;
+  }
+  player.sendMessage("§7No technique equipped in this slot.");
+}
