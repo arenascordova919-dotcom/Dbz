@@ -3,20 +3,20 @@
   "long_form@common_dialogs.main_panel_no_buttons": {
     "$title_panel": "common_dialogs.standard_title_label",
     "$title_size": [
-      "100% - 15px",
-      14
+      "100% - 12px",
+      12
     ],
     "$title_max_size": [
-      "100% - 15px",
-      14
+      "100% - 12px",
+      12
     ],
     "$title_offset": [
       0,
-      7
+      5
     ],
     "$custom_background": "dragon_breakers.form_background",
     "size": [
-      286,
+      258,
       220
     ],
     "$text_name": "#title_text",
@@ -27,11 +27,11 @@
   "long_form_dynamic_buttons_panel": {
     "type": "stack_panel",
     "size": [
-      "100% - 8px",
+      "100% - 6px",
       "100%c"
     ],
     "offset": [
-      4,
+      3,
       0
     ],
     "orientation": "vertical",
@@ -58,7 +58,7 @@
     "type": "stack_panel",
     "size": [
       "100%",
-      32
+      27
     ],
     "orientation": "horizontal",
     "controls": [
@@ -66,7 +66,7 @@
         "panel_name": {
           "type": "panel",
           "size": [
-            38,
+            30,
             "100%c"
           ],
           "bindings": [
@@ -84,12 +84,12 @@
                 "type": "image",
                 "layer": 2,
                 "size": [
-                  32,
-                  32
+                  24,
+                  24
                 ],
                 "offset": [
                   2,
-                  2
+                  1
                 ],
                 "bindings": [
                   {
@@ -122,14 +122,14 @@
           "anchor_to": "top_left",
           "size": [
             "fill",
-            30
+            25
           ],
           "$button_text": "#form_button_text",
           "$button_text_binding_type": "collection",
           "$button_text_grid_collection_name": "form_buttons",
           "$button_text_max_size": [
             "100%",
-            24
+            20
           ],
           "bindings": [
             {
@@ -155,7 +155,7 @@
             0.66,
             0.08
           ],
-          "$button_font_size": "normal"
+          "$button_font_size": "small"
         }
       }
     ]
