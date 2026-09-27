@@ -20,7 +20,8 @@ const DEFAULTS = Object.freeze({
   skill2: "Ki Blast",
   skill3: "Spirit Bomb",
   skill4: "Empty",
-  characterCreated: 0
+  characterCreated: 0,
+  creationRevision: 0
 });
 
 const key = (name) => `dbz:${name}`;
