@@ -1,5 +1,5 @@
 import { system } from "@minecraft/server";
-import { clampResource, getNumber, getString } from "./playerData.js";
+import { clampResource, getFocusMultiplier, getNumber, getString } from "./playerData.js";
 import { CONFIG } from "./config.js";
 
 const cooldown = new Map();
@@ -96,8 +96,25 @@ function impactBurst(dimension, location, particleId, radius = 0.45) {
   }
 }
 
+function spiritOrbLayers(dimension, location) {
+  const r = 0.52;
+  const offsets = [
+    [0, 0, 0],
+    [r, 0, 0], [-r, 0, 0],
+    [0, r, 0], [0, -r, 0],
+    [0, 0, r], [0, 0, -r]
+  ];
+  for (const [x, y, z] of offsets) {
+    safeParticle(dimension, "dbz:spirit_bomb_orb", {
+      x: location.x + x,
+      y: location.y + y,
+      z: location.z + z
+    });
+  }
+}
+
 export function castKamehameha(player) {
-  const cost = 35;
+  const cost = Math.max(1, Math.round(35 * getFocusMultiplier(player, "cost")));
   if (!ready(player, "kame")) return;
 
   const ki = getNumber(player, "ki");
@@ -107,7 +124,7 @@ export function castKamehameha(player) {
   }
 
   clampResource(player, "ki", CONFIG.maxKi, ki - cost);
-  setCooldown(player, "kame", 75);
+  setCooldown(player, "kame", Math.round(75 * getFocusMultiplier(player, "cooldown")));
 
   // Short hand-charge phase.
   for (let tick = 0; tick < 9; tick++) {
@@ -138,7 +155,7 @@ export function castKamehameha(player) {
           if (damaged.has(entity.id)) continue;
           damaged.add(entity.id);
           try {
-            entity.applyDamage(CONFIG.kamehamehaDamage, { damagingEntity: player });
+            entity.applyDamage(Math.round(CONFIG.kamehamehaDamage * getFocusMultiplier(player, "damage")), { damagingEntity: player });
             entity.applyImpulse({
               x: dir.x * 1.35,
               y: Math.max(0.18, dir.y * 0.45),
@@ -173,7 +190,7 @@ export function castKamehameha(player) {
 }
 
 export function castKiBlast(player) {
-  const cost = CONFIG.kiBlastCost;
+  const cost = Math.max(1, Math.round(CONFIG.kiBlastCost * getFocusMultiplier(player, "cost")));
   if (!ready(player, "blast")) return;
 
   const ki = getNumber(player, "ki");
@@ -183,7 +200,7 @@ export function castKiBlast(player) {
   }
 
   clampResource(player, "ki", CONFIG.maxKi, ki - cost);
-  setCooldown(player, "blast", CONFIG.kiBlastCooldownTicks);
+  setCooldown(player, "blast", Math.max(2, Math.round(CONFIG.kiBlastCooldownTicks * getFocusMultiplier(player, "cooldown"))));
 
   let origin;
   let direction;
@@ -227,7 +244,7 @@ export function castKiBlast(player) {
 
           if (hit) {
             try {
-              hit.applyDamage(CONFIG.kiBlastDamage, { damagingEntity: player });
+              hit.applyDamage(Math.round(CONFIG.kiBlastDamage * getFocusMultiplier(player, "damage")), { damagingEntity: player });
               hit.applyImpulse({
                 x: direction.x * 0.78,
                 y: 0.17,
@@ -247,7 +264,7 @@ export function castKiBlast(player) {
 }
 
 export function castSpiritBomb(player) {
-  const cost = 80;
+  const cost = Math.max(1, Math.round(80 * getFocusMultiplier(player, "cost")));
   if (!ready(player, "spirit")) return;
 
   const ki = getNumber(player, "ki");
@@ -257,14 +274,14 @@ export function castSpiritBomb(player) {
   }
 
   clampResource(player, "ki", CONFIG.maxKi, ki - cost);
-  setCooldown(player, "spirit", 220);
+  setCooldown(player, "spirit", Math.round(220 * getFocusMultiplier(player, "cooldown")));
 
   // Build a large orb above the player for ~1.5 seconds.
   for (let tick = 0; tick < 30; tick += 2) {
     system.runTimeout(() => {
       try {
         const base = player.location;
-        safeParticle(player.dimension, "dbz:spirit_bomb_orb", {
+        spiritOrbLayers(player.dimension, {
           x: base.x,
           y: base.y + 3.0,
           z: base.z
@@ -297,7 +314,7 @@ export function castSpiritBomb(player) {
 
       for (const entity of entitiesNear(player, location, 5.5)) {
         try {
-          entity.applyDamage(CONFIG.spiritBombDamage, { damagingEntity: player });
+          entity.applyDamage(Math.round(CONFIG.spiritBombDamage * getFocusMultiplier(player, "damage")), { damagingEntity: player });
           const dx = entity.location.x - location.x;
           const dz = entity.location.z - location.z;
           const mag = Math.max(0.01, Math.sqrt(dx * dx + dz * dz));
@@ -314,7 +331,7 @@ export function castSpiritBomb(player) {
 
         try {
           const location = point(origin, direction, step * 2.15);
-          safeParticle(dimension, "dbz:spirit_bomb_orb", location);
+          spiritOrbLayers(dimension, location);
 
           const hitEntity = entitiesNear(player, location, 1.8).length > 0;
           if (hitEntity || isSolidImpact(dimension, location) || step === 14) {
