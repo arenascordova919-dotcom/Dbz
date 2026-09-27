@@ -8,6 +8,7 @@ import { startHudBridge } from "./hudBridge.js";
 import { cleanupLegacyRaceAppearance } from "./appearance.js";
 import { startChargingSystem } from "./charging.js";
 import { registerProgression } from "./progression.js";
+import { startPlayerRendererSync, syncPlayerRenderer } from "./playerRenderer.js";
 
 function findEmptyInventorySlot(inventory, avoid = new Set()) {
   for (let i = 0; i < inventory.size; i++) {
@@ -66,6 +67,7 @@ function preparePlayer(player) {
   initializePlayer(player);
   ensureSystemSlots(player);
   system.run(() => cleanupLegacyRaceAppearance(player));
+  system.run(() => syncPlayerRenderer(player));
   system.runTimeout(() => ensureCharacterSetup(player), 12);
 
   try {
@@ -110,6 +112,7 @@ system.run(() => {
   startChargingSystem();
   registerCombat();
   registerProgression();
+  startPlayerRendererSync();
 
   system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
@@ -117,5 +120,5 @@ system.run(() => {
     }
   }, 100);
 
-  console.warn("[Dragon Breakers] v0.6.5 loaded.");
+  console.warn("[Dragon Breakers] v0.7.0 Player Renderer Rebuild loaded.");
 });
