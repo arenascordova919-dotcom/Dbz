@@ -1,5 +1,5 @@
 import { ActionFormData } from "@minecraft/server-ui";
-import { getNumber, getString, setString } from "./playerData.js";
+import { getLoadout, getNumber, getString, selectSkillSlot, setString } from "./playerData.js";
 
 const RACES = [
   { id: "Saiyan", text: "§6Saiyan\n§7ATK 4  DEF 2  SPD 3  REGEN 0" },
@@ -19,14 +19,21 @@ async function chooseRace(player) {
 }
 
 async function specials(player) {
+  const loadout = getLoadout(player);
   const form = new ActionFormData()
     .title("§lDRAGON BREAKERS • SPECIALS")
-    .body("Technique loadout\n\n§7Slot 1  Kamehameha\nSlot 2  Ki Blast\nSlot 3  Spirit Bomb\nSlot 4  Empty")
-    .button("§bKamehameha")
-    .button("§eKi Blast")
-    .button("§5Spirit Bomb")
+    .body(`§7Select the active technique slot.\n§fCurrent: §6Slot ${loadout.selectedSlot}\n\n§71  §b${loadout.slots[0]}\n§72  §e${loadout.slots[1]}\n§73  §5${loadout.slots[2]}\n§74  §8${loadout.slots[3]}`)
+    .button("§6Slot 1 • Kamehameha")
+    .button("§6Slot 2 • Ki Blast")
+    .button("§6Slot 3 • Spirit Bomb")
+    .button("§6Slot 4 • Empty")
     .button("§8Back");
-  await form.show(player);
+  const result = await form.show(player);
+  if (result.canceled || result.selection === undefined) return;
+  if (result.selection >= 0 && result.selection <= 3) {
+    selectSkillSlot(player, result.selection + 1);
+    player.sendMessage(`§6Active technique slot: §f${result.selection + 1}`);
+  }
 }
 
 export async function openMainMenu(player) {
