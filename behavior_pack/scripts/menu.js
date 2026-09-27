@@ -53,7 +53,7 @@ function applyRaceStats(player, race) {
 
 export async function ensureCharacterCreation(player) {
   if (!player) return;
-  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 1) return;
+  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 2) return;
   if (creationOpen.has(player.id)) return;
 
   creationOpen.add(player.id);
@@ -62,21 +62,18 @@ export async function ensureCharacterCreation(player) {
   if (index < 0) index = 0;
 
   try {
-    while (getNumber(player, "creationRevision") < 1) {
+    while (getNumber(player, "creationRevision") < 2) {
       const race = RACES[index];
       const form = new ActionFormData()
         .title("§lDRAGON BREAKERS")
         .header("§6CHARACTER CREATION")
         .label(
-          "§fSELECT YOUR RACE\n\n" +
-          `§fRACE: ${race.color}§l${race.id}§r\n` +
-          `§7${race.description}\n\n` +
-          `§fATK: §6${race.atk}   §fDEF: §e${race.def}   §fSPD: §b${race.spd}   §fREGEN: §a${race.regen}\n\n` +
-          "§7Use Previous / Next to preview a race, then confirm."
+          `${race.color}§l${race.id.toUpperCase()}§r  §7•  §fATK §6${race.atk}  §fDEF §e${race.def}  §fSPD §b${race.spd}  §fREG §a${race.regen}\n` +
+          `§7${race.description}`
         )
-        .button("§6◀  PREVIOUS", race.icon)
+        .button("§6◀  PREVIOUS")
         .button(`§a✔  SELECT ${race.id.toUpperCase()}`, race.icon)
-        .button("§6NEXT  ▶", race.icon);
+        .button("§6NEXT  ▶");
 
       const result = await form.show(player);
       if (result.canceled || result.selection === undefined) {
@@ -98,7 +95,7 @@ export async function ensureCharacterCreation(player) {
         setString(player, "race", race.id);
         applyRaceStats(player, race);
         setNumber(player, "characterCreated", 1);
-        setNumber(player, "creationRevision", 1);
+        setNumber(player, "creationRevision", 2);
         player.sendMessage(`§aCharacter created! Race: §f${race.id}`);
         break;
       }
@@ -110,7 +107,7 @@ export async function ensureCharacterCreation(player) {
     creationOpen.delete(player.id);
   }
 
-  if (retry && getNumber(player, "creationRevision") < 1) {
+  if (retry && getNumber(player, "creationRevision") < 2) {
     system.runTimeout(() => ensureCharacterCreation(player), 30);
   }
 }
@@ -145,9 +142,8 @@ async function specials(player) {
     .title("§lDRAGON BREAKERS")
     .header("§6TECHNIQUES")
     .label(
-      `§7Selected slot: §6${loadout.selectedSlot}\n` +
-      `§f1 §b${loadout.slots[0]}\n§f2 §e${loadout.slots[1]}\n§f3 §9${loadout.slots[2]}\n§f4 §8${loadout.slots[3]}\n\n` +
-      "§6Mobile controls:\n§fHold Crouch = Charge Ki + Aura\n§fTap Use = Fire active technique\n§fCrouch + Use = Cycle techniques"
+      `§fACTIVE §6[${loadout.selectedSlot}] §f${loadout.slots[loadout.selectedSlot - 1]}\n` +
+      "§7Slot 8 Launcher: §fUse = Fire  §7•  Crouch+Use = Cycle\n§7Hold Crouch = Charge Ki"
     )
     .button("§6Slot 1 • Kamehameha", "textures/items/kamehameha")
     .button("§6Slot 2 • Ki Blast", "textures/items/ki_blast")
@@ -197,6 +193,24 @@ async function settingsMenu(player) {
   if (result.selection === 2) return openMainMenu(player);
 }
 
+async function characterMenu(player) {
+  const race = getString(player, "race");
+  const result = await new ActionFormData()
+    .title("§lDRAGON BREAKERS")
+    .header("§6CHARACTER")
+    .label(`§fRace: §e${race}\n§7Race stats are saved to your character. Re-open race selection only if you want to change your race.`)
+    .button("§6Race Selection", "textures/items/race_saiyan_icon")
+    .button("§8Back")
+    .show(player);
+
+  if (result.canceled || result.selection === undefined) return;
+  if (result.selection === 0) {
+    setNumber(player, "creationRevision", 1);
+    return ensureCharacterCreation(player);
+  }
+  if (result.selection === 1) return openMainMenu(player);
+}
+
 async function placeholder(player, title, text) {
   const result = await new ActionFormData()
     .title("§lDRAGON BREAKERS")
@@ -208,7 +222,7 @@ async function placeholder(player, title, text) {
 }
 
 export async function openMainMenu(player) {
-  if (getNumber(player, "creationRevision") < 1) return ensureCharacterCreation(player);
+  if (getNumber(player, "creationRevision") < 2) return ensureCharacterCreation(player);
 
   const race = getString(player, "race");
   const level = getNumber(player, "level");
@@ -218,18 +232,20 @@ export async function openMainMenu(player) {
     .title("§lDRAGON BREAKERS")
     .header("§6MAIN MENU")
     .label(`§fRace: §e${race}   §fLV: §e${level}   §fPL: §6${pl}`)
-    .button("§6Player Status", "textures/items/dbz_menu")
-    .button("§6Transformations", "textures/items/dbz_menu")
+    .button("§6Player Status", "textures/items/race_saiyan_icon")
+    .button("§fCharacter", "textures/items/race_earthling_icon")
+    .button("§6Transformations", "textures/items/spirit_bomb")
     .button("§bTechniques", "textures/items/kamehameha")
-    .button("§eQuests", "textures/items/dbz_menu")
-    .button("§fSettings", "textures/items/dbz_menu")
-    .button("§cClose", "textures/items/dbz_menu");
+    .button("§eQuests", "textures/items/ki_blast")
+    .button("§fSettings", "textures/items/technique_launcher")
+    .button("§cClose");
 
   const result = await form.show(player);
   if (result.canceled || result.selection === undefined) return;
   if (result.selection === 0) return playerStatus(player);
-  if (result.selection === 1) return placeholder(player, "TRANSFORMATIONS", "Transformation selection and visible forms are being connected next.");
-  if (result.selection === 2) return specials(player);
-  if (result.selection === 3) return placeholder(player, "QUESTS", "Quest progression will be added after the combat/HUD foundation is stable.");
-  if (result.selection === 4) return settingsMenu(player);
+  if (result.selection === 1) return characterMenu(player);
+  if (result.selection === 2) return placeholder(player, "TRANSFORMATIONS", "Transformation progression is the next major system.");
+  if (result.selection === 3) return specials(player);
+  if (result.selection === 4) return placeholder(player, "QUESTS", "Quest progression will be added after combat stabilization.");
+  if (result.selection === 5) return settingsMenu(player);
 }
