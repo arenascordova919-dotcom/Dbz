@@ -122,7 +122,7 @@ export async function ensureCharacterCreation(player) {
 }
 
 export async function ensureAppearanceSetup(player) {
-  if (!player || getNumber(player, "appearanceRevision") >= 1) return ensureRaceCustomization(player);
+  if (!player || getNumber(player, "appearanceRevision") >= 2) return ensureRaceCustomization(player);
   if (appearanceOpen.has(player.id)) return;
 
   appearanceOpen.add(player.id);
@@ -139,7 +139,7 @@ export async function ensureAppearanceSetup(player) {
   if (!EYE_STYLES.includes(eyeStyle)) eyeStyle = "Eyes 1";
 
   try {
-    while (getNumber(player, "appearanceRevision") < 1) {
+    while (getNumber(player, "appearanceRevision") < 2) {
       const race = getString(player, "race");
       const form = new ActionFormData()
         .title("§lDRAGON BREAKERS")
@@ -186,7 +186,7 @@ export async function ensureAppearanceSetup(player) {
         setString(player, "hairStyle", hairStyle);
         setString(player, "hairColor", hairColor);
         setString(player, "eyeStyle", eyeStyle);
-        setNumber(player, "appearanceRevision", 1);
+        setNumber(player, "appearanceRevision", 2);
         break;
       }
     }
@@ -196,7 +196,7 @@ export async function ensureAppearanceSetup(player) {
     appearanceOpen.delete(player.id);
   }
 
-  if (getNumber(player, "appearanceRevision") >= 1) {
+  if (getNumber(player, "appearanceRevision") >= 2) {
     system.runTimeout(() => ensureRaceCustomization(player), 2);
   }
 }
@@ -256,7 +256,7 @@ export async function ensureRaceCustomization(player) {
 export async function ensureCharacterSetup(player) {
   const revision = getNumber(player, "creationRevision");
   if (revision < 2) return ensureCharacterCreation(player);
-  if (getNumber(player, "appearanceRevision") < 1) return ensureAppearanceSetup(player);
+  if (getNumber(player, "appearanceRevision") < 2) return ensureAppearanceSetup(player);
   if (revision < 3) return ensureRaceCustomization(player);
 }
 
@@ -371,7 +371,7 @@ async function placeholder(player, title, text) {
 }
 
 export async function openMainMenu(player) {
-  if (getNumber(player, "creationRevision") < 3 || getNumber(player, "appearanceRevision") < 1) return ensureCharacterSetup(player);
+  if (getNumber(player, "creationRevision") < 3 || getNumber(player, "appearanceRevision") < 2) return ensureCharacterSetup(player);
 
   const race = getString(player, "race");
   const level = getNumber(player, "level");
