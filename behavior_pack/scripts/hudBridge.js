@@ -1,29 +1,60 @@
 import { system, world } from "@minecraft/server";
 import { CONFIG } from "./config.js";
-import { getLoadout, getNumber } from "./playerData.js";
+import { getLoadout, getNumber, getString } from "./playerData.js";
 
 const cache = new Map();
+
 function health(player) {
   try {
     const component = player.getComponent("minecraft:health");
     return { current: Math.max(0, Math.ceil(component.currentValue)), max: Math.ceil(component.effectiveMax) };
-  } catch { return { current: 20, max: 20 }; }
+  } catch {
+    return { current: 20, max: 20 };
+  }
 }
+
+function bar(value, max, color) {
+  const segments = 12;
+  const safeMax = Math.max(1, max);
+  const count = Math.max(0, Math.min(segments, Math.round((value / safeMax) * segments)));
+  return color + "▰".repeat(count) + "§8" + "▱".repeat(segments - count);
+}
+
 function writeIfChanged(player, key, value, state) {
   if (state[key] === value) return;
-  try { player.setDynamicProperty("dbz:" + key, value); state[key] = value; } catch {}
+  try {
+    player.setDynamicProperty("dbz:" + key, value);
+    state[key] = value;
+  } catch {}
 }
+
 export function startHudBridge() {
   system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
       const state = cache.get(player.id) ?? {};
-      const hp = health(player), loadout = getLoadout(player);
+      const hp = health(player);
+      const ki = Math.floor(getNumber(player, "ki"));
+      const stamina = Math.floor(getNumber(player, "stamina"));
+      const level = Math.floor(getNumber(player, "level"));
+      const race = getString(player, "race");
+      const loadout = getLoadout(player);
+      const selected = loadout.slots[loadout.selectedSlot - 1] ?? "Empty";
+
       writeIfChanged(player, "hud_hp", hp.current, state);
       writeIfChanged(player, "hud_hp_max", hp.max, state);
-      writeIfChanged(player, "hud_ki", Math.floor(getNumber(player, "ki")), state);
-      writeIfChanged(player, "hud_stamina", Math.floor(getNumber(player, "stamina")), state);
-      writeIfChanged(player, "hud_level", Math.floor(getNumber(player, "level")), state);
-      writeIfChanged(player, "hud_selected", loadout.slots[loadout.selectedSlot - 1] ?? "Empty", state);
+      writeIfChanged(player, "hud_ki", ki, state);
+      writeIfChanged(player, "hud_stamina", stamina, state);
+      writeIfChanged(player, "hud_level", level, state);
+      writeIfChanged(player, "hud_selected", selected, state);
+
+      const hudText =
+        `§6§lDRAGON BREAKERS §r§7• §fLV §e${level} §7• §f${race}\n` +
+        `§cHP §r${bar(hp.current, hp.max, "§c")} §f${hp.current}/${hp.max}\n` +
+        `§bKI §r${bar(ki, CONFIG.maxKi, "§b")} §f${ki}/${CONFIG.maxKi}\n` +
+        `§eSTM §r${bar(stamina, CONFIG.maxStamina, "§e")} §f${stamina}/${CONFIG.maxStamina}\n` +
+        `§7Active: §6[${loadout.selectedSlot}] §f${selected}`;
+
+      try { player.onScreenDisplay.setActionBar(hudText); } catch {}
       cache.set(player.id, state);
     }
   }, Math.max(4, CONFIG.hudIntervalTicks));
