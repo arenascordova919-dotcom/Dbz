@@ -120,5 +120,5 @@ system.run(() => {
     }
   }, 100);
 
-  console.warn("[Dragon Breakers] v0.7.1 Render + Visual Fix loaded.");
+  console.warn("[Dragon Breakers] v0.7.2 Mobile Particle Fix loaded.");
 });
