@@ -3,6 +3,9 @@
   "texture_data": {
     "ki_blast": {
       "textures": "textures/items/ki_blast"
+    },
+    "dbz_menu": {
+      "textures": "textures/items/dbz_menu"
     }
   }
 }
