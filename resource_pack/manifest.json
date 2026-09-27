@@ -2,12 +2,12 @@
   "format_version": 2,
   "header": {
     "name": "Dragon Breakers | RP",
-    "description": "Dragon Breakers v0.6.5 resources",
+    "description": "Dragon Breakers v0.7.0 Player Renderer Rebuild resources",
     "uuid": "6d3a7c99-4d9c-47b6-c8e5-bf3a4e0e7244",
     "version": [
       0,
-      6,
-      5
+      7,
+      0
     ],
     "min_engine_version": [
       1,
@@ -21,8 +21,8 @@
       "uuid": "7e4b8daa-5e0d-48c7-d9f6-c01b51f83555",
       "version": [
         0,
-        6,
-        5
+        7,
+        0
       ]
     }
   ],
@@ -31,8 +31,8 @@
       "uuid": "3f0d1e4e-7e8b-4a3f-9d0a-1c8b2e6f4011",
       "version": [
         0,
-        6,
-        5
+        7,
+        0
       ]
     }
   ]
