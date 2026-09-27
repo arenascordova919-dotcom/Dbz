@@ -7,10 +7,12 @@
         "dbz:race_appearance_arcosian": "query.owner_identifier == 'minecraft:player'"
       },
       "materials": {
-        "default": "armor"
+        "default": "armor",
+        "enchanted": "armor_enchanted"
       },
       "textures": {
-        "default": "textures/entity/race_arcosian"
+        "default": "textures/entity/race_arcosian",
+        "enchanted": "textures/misc/enchanted_actor_glint"
       },
       "geometry": {
         "default": "geometry.player.armor1"
