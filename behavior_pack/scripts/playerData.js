@@ -106,8 +106,6 @@ export function addXp(player, amount, reason = "") {
     try {
       player.sendMessage(`§6§lLEVEL UP! §r§fLevel ${level} §7• §e+${levels * 3} TP`);
     } catch {}
-  } else if (reason) {
-    try { player.sendMessage(`§7+${Math.floor(amount)} XP §8• ${reason}`); } catch {}
   }
 
   return { leveled: levels > 0, levels, level, xp };
