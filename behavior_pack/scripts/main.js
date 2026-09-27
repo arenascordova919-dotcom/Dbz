@@ -1,56 +1,73 @@
 import { HudElement, HudVisibility, ItemStack, system, world } from "@minecraft/server";
-import { initializePlayer } from "./playerData.js";
+import { initializePlayer, getNumber } from "./playerData.js";
 import { startResourceRegeneration } from "./resources.js";
 import { registerCombat } from "./combat.js";
 import { ensureCharacterCreation, openMainMenu } from "./menu.js";
-import { registerTechniqueControls } from "./controls.js";
+import { cycleTechniqueSlot, useSelectedTechnique } from "./controls.js";
 import { startHudBridge } from "./hudBridge.js";
+import { applyRaceAppearance } from "./appearance.js";
 
-function ensureMenuSlot(player) {
+function findEmptyInventorySlot(inventory, avoid = new Set()) {
+  for (let i = 0; i < inventory.size; i++) {
+    if (avoid.has(i)) continue;
+    if (!inventory.getItem(i)) return i;
+  }
+  return -1;
+}
+
+function ensureSystemItemSlot(player, typeId, target) {
   try {
     const inventory = player.getComponent("minecraft:inventory")?.container;
-    if (!inventory) return;
-    const target = 8;
-    const targetItem = inventory.getItem(target);
-    if (targetItem?.typeId === "dbz:menu") return;
+    if (!inventory) return false;
 
-    let existingMenu = -1;
+    const targetItem = inventory.getItem(target);
+    if (targetItem?.typeId === typeId) return true;
+
+    let existing = -1;
     for (let i = 0; i < inventory.size; i++) {
-      if (inventory.getItem(i)?.typeId === "dbz:menu") { existingMenu = i; break; }
+      if (inventory.getItem(i)?.typeId === typeId) {
+        existing = i;
+        break;
+      }
     }
 
-    if (existingMenu >= 0) {
-      inventory.setItem(existingMenu, targetItem);
-      inventory.setItem(target, new ItemStack("dbz:menu", 1));
-      return;
+    if (existing >= 0) {
+      inventory.setItem(existing, targetItem);
+      inventory.setItem(target, new ItemStack(typeId, 1));
+      return true;
     }
 
     if (!targetItem) {
-      inventory.setItem(target, new ItemStack("dbz:menu", 1));
-      return;
+      inventory.setItem(target, new ItemStack(typeId, 1));
+      return true;
     }
 
-    let empty = -1;
-    for (let i = 9; i < inventory.size; i++) {
-      if (!inventory.getItem(i)) { empty = i; break; }
-    }
-    if (empty < 0) {
-      for (let i = 0; i < 8; i++) {
-        if (!inventory.getItem(i)) { empty = i; break; }
-      }
-    }
-    if (empty < 0) return;
+    const empty = findEmptyInventorySlot(inventory, new Set([7, 8]));
+    if (empty < 0) return false;
+
     inventory.setItem(empty, targetItem);
-    inventory.setItem(target, new ItemStack("dbz:menu", 1));
+    inventory.setItem(target, new ItemStack(typeId, 1));
+    return true;
   } catch (error) {
-    console.warn("[Dragon Breakers] Menu slot maintenance failed: " + error);
+    console.warn("[Dragon Breakers] System slot maintenance failed for " + typeId + ": " + error);
+    return false;
   }
+}
+
+function ensureSystemSlots(player) {
+  // Slot 8: technique launcher. Slot 9: Dragon Breakers menu.
+  ensureSystemItemSlot(player, "dbz:technique_launcher", 7);
+  ensureSystemItemSlot(player, "dbz:menu", 8);
 }
 
 function preparePlayer(player) {
   initializePlayer(player);
-  ensureMenuSlot(player);
+  ensureSystemSlots(player);
+  if (getNumber(player, "characterCreated") >= 1) {
+    system.run(() => applyRaceAppearance(player));
+  }
   system.runTimeout(() => ensureCharacterCreation(player), 12);
+
   try {
     player.onScreenDisplay.setHudVisibility(HudVisibility.Hide, [HudElement.Health, HudElement.Hunger]);
   } catch (error) {
@@ -61,7 +78,29 @@ function preparePlayer(player) {
 world.afterEvents.playerSpawn.subscribe(({ player }) => system.run(() => preparePlayer(player)));
 
 world.afterEvents.itemUse.subscribe(({ source, itemStack }) => {
-  if (source.typeId === "minecraft:player" && itemStack?.typeId === "dbz:menu") openMainMenu(source);
+  if (source.typeId !== "minecraft:player") return;
+
+  if (itemStack?.typeId === "dbz:menu") {
+    openMainMenu(source);
+    return;
+  }
+
+  if (itemStack?.typeId === "dbz:technique_launcher") {
+    if (getNumber(source, "characterCreated") < 1) {
+      ensureCharacterCreation(source);
+      return;
+    }
+
+    try {
+      if (source.isSneaking) {
+        cycleTechniqueSlot(source);
+      } else {
+        useSelectedTechnique(source);
+      }
+    } catch (error) {
+      console.warn("[Dragon Breakers] Technique Launcher failed: " + error);
+    }
+  }
 });
 
 system.run(() => {
@@ -69,7 +108,13 @@ system.run(() => {
   startResourceRegeneration();
   startHudBridge();
   registerCombat();
-  registerTechniqueControls();
-  system.runInterval(() => { for (const player of world.getAllPlayers()) ensureMenuSlot(player); }, 100);
-  console.warn("[Dragon Breakers] v0.5.2 loaded.");
+
+  system.runInterval(() => {
+    for (const player of world.getAllPlayers()) {
+      ensureSystemSlots(player);
+      if (getNumber(player, "characterCreated") >= 1) applyRaceAppearance(player);
+    }
+  }, 100);
+
+  console.warn("[Dragon Breakers] v0.6.0 loaded.");
 });
