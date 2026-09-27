@@ -1,5 +1,15 @@
 {
   "resource_pack_name": "dragon_breakers",
   "texture_name": "atlas.items",
-  "texture_data": {}
+  "texture_data": {
+    "dbz_menu": {
+      "textures": "textures/items/dbz_menu"
+    },
+    "ki_blast": {
+      "textures": "textures/items/ki_blast"
+    },
+    "kamehameha": {
+      "textures": "textures/items/kamehameha"
+    }
+  }
 }
