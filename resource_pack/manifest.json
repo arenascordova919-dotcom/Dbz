@@ -2,12 +2,12 @@
   "format_version": 2,
   "header": {
     "name": "Dragon Breakers | RP",
-    "description": "Dragon Breakers v0.7.2 Mobile Particle Fix resources",
+    "description": "Dragon Breakers v0.7.3 Stability + Controls Fix resources",
     "uuid": "6d3a7c99-4d9c-47b6-c8e5-bf3a4e0e7244",
     "version": [
       0,
       7,
-      2
+      3
     ],
     "min_engine_version": [
       1,
@@ -22,7 +22,7 @@
       "version": [
         0,
         7,
-        2
+        3
       ]
     }
   ],
@@ -32,7 +32,7 @@
       "version": [
         0,
         7,
-        2
+        3
       ]
     }
   ]
