@@ -1,9 +1,9 @@
-name: Dragon Breakers Validate and Build
+name: Dragon Breakers v0.7.3 Stability Build
 
 on:
   push:
     branches:
-      - build/v0.7.2-mobile-particle-fix
+      - build/v0.7.3-stability-controls
   workflow_dispatch:
 
 permissions:
@@ -13,248 +13,128 @@ jobs:
   validate-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install image validator
         run: python -m pip install --disable-pip-version-check pillow
 
-      - name: Validate JavaScript syntax
+      - name: Validate JavaScript
         run: |
           set -e
           for file in behavior_pack/scripts/*.js; do
             node --check "$file"
           done
 
-      - name: Validate Dragon Breakers v0.7.2
+      - name: Validate v0.7.3 stability
         run: |
           python - <<'PY'
           import json, pathlib, uuid
           from PIL import Image
 
-          BP = pathlib.Path("behavior_pack")
-          RP = pathlib.Path("resource_pack")
+          BP=pathlib.Path("behavior_pack")
+          RP=pathlib.Path("resource_pack")
 
-          # JSON syntax
-          for root in (BP, RP):
+          for root in (BP,RP):
               for path in root.rglob("*.json"):
-                  try:
-                      json.loads(path.read_text(encoding="utf-8"))
-                  except Exception as exc:
-                      raise SystemExit(f"Invalid JSON: {path}: {exc}")
+                  json.loads(path.read_text(encoding="utf-8"))
 
-          # PNG integrity
           for path in RP.rglob("*.png"):
-              try:
-                  with Image.open(path) as image:
-                      image.verify()
-              except Exception as exc:
-                  raise SystemExit(f"Malformed PNG: {path}: {exc}")
+              with Image.open(path) as image:
+                  image.verify()
 
-          bp = json.load(open(BP / "manifest.json", encoding="utf-8"))
-          rp = json.load(open(RP / "manifest.json", encoding="utf-8"))
-          expected = [0, 7, 2]
+          bp=json.load(open(BP/"manifest.json",encoding="utf-8"))
+          rp=json.load(open(RP/"manifest.json",encoding="utf-8"))
+          expected=[0,7,3]
           if bp["header"]["version"] != expected or rp["header"]["version"] != expected:
-              raise SystemExit(f"Expected v0.7.2, got BP={bp['header']['version']} RP={rp['header']['version']}")
+              raise SystemExit(f"Expected v0.7.3, got BP={bp['header']['version']} RP={rp['header']['version']}")
           if bp["header"]["version"] != rp["header"]["version"]:
-              raise SystemExit("BP/RP version mismatch")
+              raise SystemExit("BP/RP mismatch")
 
-          for manifest in (bp, rp):
+          for manifest in (bp,rp):
               uuid.UUID(manifest["header"]["uuid"])
-              for module in manifest.get("modules", []):
+              for module in manifest.get("modules",[]):
                   uuid.UUID(module["uuid"])
-              for dep in manifest.get("dependencies", []):
-                  if "uuid" in dep:
-                      uuid.UUID(dep["uuid"])
+              for dep in manifest.get("dependencies",[]):
+                  if "uuid" in dep: uuid.UUID(dep["uuid"])
 
-          if not any(d.get("uuid") == rp["header"]["uuid"] for d in bp.get("dependencies", [])):
-              raise SystemExit("BP does not depend on RP")
-          if not any(d.get("uuid") == bp["header"]["uuid"] for d in rp.get("dependencies", [])):
-              raise SystemExit("RP does not depend on BP")
+          # Stability rule: never replace minecraft:player until the renderer is
+          # proven safe in UI/skin contexts. This removes the actor-less Molang crash.
+          if (BP/"entities/player.json").exists():
+              raise SystemExit("Unsafe BP minecraft:player override returned")
+          if (RP/"entity/player.entity.json").exists():
+              raise SystemExit("Unsafe RP minecraft:player override returned")
 
-          # Old fake race armor must stay gone.
-          if list((BP / "items").glob("race_appearance_*.json")):
-              raise SystemExit("Legacy race appearance items returned")
-          if list((RP / "attachables").glob("race_appearance_*.json")):
-              raise SystemExit("Legacy race appearance attachables returned")
-
-          # Menu/launcher remain inventory-visible but invisible in hand.
-          for hidden in ("menu.json", "technique_launcher.json"):
-              path = RP / "attachables" / hidden
-              if not path.exists():
-                  raise SystemExit(f"Missing hidden-hand attachable: {path}")
-              data = json.load(open(path, encoding="utf-8"))
-              geometry = data["minecraft:attachable"]["description"]["geometry"]["default"]
-              if geometry != "geometry.dbz.empty":
-                  raise SystemExit(f"{hidden} does not use empty held geometry")
-
-          required = [
-              BP / "entities/player.json",
-              BP / "scripts/playerRenderer.js",
-              RP / "entity/player.entity.json",
-              RP / "models/entity/dragon_breakers_player.geo.json",
-              RP / "animations/dragon_breakers_player.animation.json",
-              RP / "render_controllers/dragon_breakers_player.render_controllers.json",
-              RP / "ui/custom_server_form.json",
-              RP / "ui/race_creator_form.json",
-              RP / "ui/appearance_creator_form.json",
-          ]
-          for path in required:
-              if not path.exists():
-                  raise SystemExit(f"Missing v0.7.2 renderer/creator file: {path}")
-
-          # BP player must preserve vanilla player and expose synced DBZ properties.
-          bp_player = json.load(open(BP / "entities/player.json", encoding="utf-8"))
-          desc = bp_player["minecraft:entity"]["description"]
-          if desc.get("identifier") != "minecraft:player":
-              raise SystemExit("BP player override does not target minecraft:player")
-          props = desc.get("properties", {})
-          required_props = {
-              "dbz:race", "dbz:body_type", "dbz:skin_tone", "dbz:hair_style",
-              "dbz:hair_color", "dbz:eye_style", "dbz:has_tail",
-              "dbz:aura_style", "dbz:charging", "dbz:transformation"
-          }
-          missing = required_props - set(props)
-          if missing:
-              raise SystemExit(f"Missing synced player properties: {sorted(missing)}")
-          for key in required_props:
-              if props[key].get("client_sync") is not True:
-                  raise SystemExit(f"Player property not client synced: {key}")
-
-          # Client player must replace normal third-person skin with DBZ race renderers.
-          client = json.load(open(RP / "entity/player.entity.json", encoding="utf-8"))
-          cdesc = client["minecraft:client_entity"]["description"]
-          if cdesc.get("identifier") != "minecraft:player":
-              raise SystemExit("RP client entity does not target minecraft:player")
-          controllers = cdesc.get("render_controllers", [])
-          controller_text = json.dumps(controllers)
-          for token in (
-              "controller.render.dbz.body.earthling",
-              "controller.render.dbz.body.saiyan",
-              "controller.render.dbz.body.namekian",
-              "controller.render.dbz.body.arcosian",
-              "controller.render.dbz.hair",
-              "controller.render.dbz.saiyan_tail",
-              "controller.render.dbz.namekian_features",
-              "controller.render.dbz.arcosian_features",
-              "controller.render.dbz.eyes",
-          ):
-              if token not in controller_text:
-                  raise SystemExit(f"Missing client render controller route: {token}")
-
-          # Normal vanilla third-person controller must be suppressed for non-spectator gameplay.
-          normal_vanilla = any(
-              isinstance(entry, dict) and "controller.render.player.third_person" in entry
-              for entry in controllers
-          )
-          if normal_vanilla:
-              raise SystemExit("Vanilla third-person player renderer still active alongside DBZ model")
-
-          # All player client texture paths must exist when they point to our pack.
-          for name, texture in cdesc.get("textures", {}).items():
-              if texture.startswith("textures/entity/dragon_breakers/"):
-                  path = RP / (texture + ".png")
-                  if not path.exists():
-                      raise SystemExit(f"Client player texture missing: {name} -> {path}")
-
-          # Render-controller texture/geometry aliases must resolve to client entity aliases.
-          rc = json.load(open(RP / "render_controllers/dragon_breakers_player.render_controllers.json", encoding="utf-8"))
-          if len(rc.get("render_controllers", {})) < 9:
-              raise SystemExit("Dragon Breakers player render-controller set is incomplete")
-          rc_text = (RP / "render_controllers/dragon_breakers_player.render_controllers.json").read_text(encoding="utf-8")
-          if "q.property(" in rc_text or "query.property(" in rc_text:
-              raise SystemExit("Direct player property query remains in render controller")
-          for visual in [
-              RP / "particles/spirit_bomb_glow.particle.json",
-              RP / "particles/aura_ring.particle.json",
+          main=(BP/"scripts/main.js").read_text(encoding="utf-8")
+          if "playerRenderer.js" in main or "startPlayerRendererSync" in main or "syncPlayerRenderer" in main:
+              raise SystemExit("Player renderer sync is still active")
+          for token in [
+              "startSystemControlPolling",
+              'selected === "dbz:menu"',
+              'selected === "dbz:technique_launcher"',
+              "player.isJumping",
+              "player.isSneaking"
           ]:
-              if not visual.exists():
-                  raise SystemExit(f"Missing v0.7.2 visual asset: {visual}")
+              if token not in main:
+                  raise SystemExit("Missing stable mobile control token: "+token)
 
-          # Mobile particle compatibility: no custom direction subsection on beam/trail.
-          for particle_name in ("kamehameha_beam.particle.json", "ki_blast_trail.particle.json"):
-              pdata = json.load(open(RP / "particles" / particle_name, encoding="utf-8"))
-              billboard = pdata["particle_effect"]["components"]["minecraft:particle_appearance_billboard"]
-              if "direction" in billboard:
-                  raise SystemExit(f"Unsafe particle direction subsection returned: {particle_name}")
-              if billboard.get("facing_camera_mode") != "lookat_xyz":
-                  raise SystemExit(f"Expected mobile-safe lookat_xyz billboard: {particle_name}")
+          charging=(BP/"scripts/charging.js").read_text(encoding="utf-8")
+          if "player.isSneaking" not in charging or "dbz:technique_launcher" not in charging:
+              raise SystemExit("Charging control path missing")
 
-          player_client_text = (RP / "entity/player.entity.json").read_text(encoding="utf-8")
-          if "variable.melee_spear_equipped = 0.0;" not in player_client_text:
-              raise SystemExit("Missing melee_spear_equipped safe initialization")
+          # Creator screens must not instantiate a player renderer.
+          for ui in ("race_creator_form.json","appearance_creator_form.json"):
+              text=(RP/"ui"/ui).read_text(encoding="utf-8")
+              if "live_player_renderer" in text:
+                  raise SystemExit("Unsafe live player renderer returned: "+ui)
 
-          # Custom UI routing + live renderer.
-          ui_defs = json.load(open(RP / "ui/_ui_defs.json", encoding="utf-8"))
-          for entry in ui_defs.get("ui_defs", []):
-              path = RP / entry
-              if not path.exists():
-                  raise SystemExit(f"_ui_defs references missing file: {path}")
+          # No actor-property queries may exist in active resource JSON.
+          for path in RP.rglob("*.json"):
+              text=path.read_text(encoding="utf-8")
+              if "query.property(" in text or "q.property(" in text:
+                  raise SystemExit(f"Actor-dependent property query remains in {path}")
 
-          server_form = (RP / "ui/server_form.json").read_text(encoding="utf-8")
-          race_ui = (RP / "ui/race_creator_form.json").read_text(encoding="utf-8")
-          appearance_ui = (RP / "ui/appearance_creator_form.json").read_text(encoding="utf-8")
-          if "dbz_race_select" not in server_form or "dbz_appearance" not in server_form:
-              raise SystemExit("Custom race/appearance server-form routing missing")
-          if "live_player_renderer" in race_ui or "live_player_renderer" in appearance_ui:
-              raise SystemExit("Unsafe live player renderer returned to creator UI")
+          # Mobile particle compatibility.
+          for particle_name in ("kamehameha_beam.particle.json","ki_blast_trail.particle.json"):
+              pdata=json.load(open(RP/"particles"/particle_name,encoding="utf-8"))
+              bb=pdata["particle_effect"]["components"]["minecraft:particle_appearance_billboard"]
+              if "direction" in bb:
+                  raise SystemExit("Unsupported direction subsection returned: "+particle_name)
+              if bb.get("facing_camera_mode") != "lookat_xyz":
+                  raise SystemExit("Expected lookat_xyz: "+particle_name)
 
-          # Script must sync render properties and appearance UI must use dedicated titles.
-          renderer_js = (BP / "scripts/playerRenderer.js").read_text(encoding="utf-8")
-          menu_js = (BP / "scripts/menu.js").read_text(encoding="utf-8")
-          if 'setProperty(property, value)' not in renderer_js:
-              raise SystemExit("Player renderer property synchronization missing")
-          if '.title("dbz_race_select")' not in menu_js or '.title("dbz_appearance")' not in menu_js:
-              raise SystemExit("Creator scripts are not using dedicated UI routes")
-          if '.button("§fCharacter"' in menu_js or "characterMenu(" in menu_js:
-              raise SystemExit("Removed Character main-menu entry returned")
+          # Hidden hand geometry remains intact.
+          for hidden in ("menu.json","technique_launcher.json"):
+              path=RP/"attachables"/hidden
+              data=json.load(open(path,encoding="utf-8"))
+              if data["minecraft:attachable"]["description"]["geometry"]["default"] != "geometry.dbz.empty":
+                  raise SystemExit("System item became visible in hand: "+hidden)
 
-          # Existing atlas references.
-          atlas = json.load(open(RP / "textures/item_texture.json", encoding="utf-8"))
-          for key, entry in atlas.get("texture_data", {}).items():
-              texture = entry.get("textures")
-              if not texture:
-                  raise SystemExit(f"Missing texture path for atlas key {key}")
-              path = RP / (texture + ".png")
-              if not path.exists():
-                  raise SystemExit(f"Atlas key {key} references missing file: {path}")
-
-          # Existing particle texture references.
-          for particle_path in (RP / "particles").glob("*.json"):
-              data = json.load(open(particle_path, encoding="utf-8"))
-              texture = data.get("particle_effect", {}).get("description", {}).get("basic_render_parameters", {}).get("texture")
-              if texture and texture.startswith("textures/"):
-                  path = RP / (texture + ".png")
-                  if not path.exists():
-                      raise SystemExit(f"Particle {particle_path} references missing texture: {path}")
-
-          print("Dragon Breakers v0.7.2 validation passed")
+          print("Dragon Breakers v0.7.3 stability validation passed")
           PY
 
       - name: Build mcaddon
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.7.2_PLAYER_RENDERER_TEST.mcaddon")
-          with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
-              for pack in ("behavior_pack", "resource_pack"):
+          out=pathlib.Path("Dragon_Breakers_v0.7.3_STABILITY_CONTROLS_FIX.mcaddon")
+          with zipfile.ZipFile(out,"w",zipfile.ZIP_DEFLATED) as z:
+              for pack in ("behavior_pack","resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
                       if path.is_file():
-                          z.write(path, path.as_posix())
-          with zipfile.ZipFile(output) as z:
-              bad = z.testzip()
+                          z.write(path,path.as_posix())
+          with zipfile.ZipFile(out) as z:
+              bad=z.testzip()
               if bad:
-                  raise SystemExit(f"Corrupt zip member: {bad}")
-              names = set(z.namelist())
+                  raise SystemExit("Corrupt member: "+bad)
+              names=set(z.namelist())
               if "behavior_pack/manifest.json" not in names or "resource_pack/manifest.json" not in names:
-                  raise SystemExit("Missing pack manifests from mcaddon")
-          print(output)
+                  raise SystemExit("Missing pack manifests")
+          print(out)
           PY
 
-      - name: Upload mcaddon artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.7.2_PLAYER_RENDERER_TEST
-          path: Dragon_Breakers_v0.7.2_PLAYER_RENDERER_TEST.mcaddon
+          name: Dragon_Breakers_v0.7.3_STABILITY_CONTROLS_FIX
+          path: Dragon_Breakers_v0.7.3_STABILITY_CONTROLS_FIX.mcaddon
           if-no-files-found: error
           retention-days: 7
