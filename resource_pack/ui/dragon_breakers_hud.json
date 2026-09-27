@@ -143,5 +143,29 @@
         }
       }
     ]
+  },
+  "form_header": {
+    "type": "panel",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "offset": [
+      0,
+      8
+    ],
+    "size": [
+      220,
+      22
+    ],
+    "controls": [
+      {
+        "title": {
+          "type": "label",
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "text": "§6§lDRAGON BREAKERS",
+          "font_size": "normal"
+        }
+      }
+    ]
   }
 }
