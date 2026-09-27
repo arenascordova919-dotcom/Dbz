@@ -1,14 +1,9 @@
-import { world } from "@minecraft/server";
-import { castSelectedTechnique } from "./techniques.js";
 import { selectSkillSlot } from "./playerData.js";
+import { castSelectedTechnique } from "./techniques.js";
 
-export function registerTechniqueControls() {
-  world.afterEvents.itemUse.subscribe(({ source, itemStack }) => {
-    if (source.typeId !== "minecraft:player") return;
-    if (itemStack?.typeId !== "dbz:menu") return;
-    // Temporary mobile-safe bridge until the RP HUD buttons are wired.
-    castSelectedTechnique(source);
-  });
+// HUD/button adapters call these functions; they do not require a held technique item.
+export function useSelectedTechnique(player) {
+  return castSelectedTechnique(player);
 }
 
 export function setTechniqueSlot(player, slot) {
