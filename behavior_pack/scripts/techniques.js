@@ -122,27 +122,70 @@ export function castKiBlast(player) {
     return;
   }
 
+  // Muzzle flash just in front of the player.
+  const muzzle = point(origin, direction, 1.15);
+  muzzle.y -= 0.12;
+  safeParticle(dimension, "dbz:ki_blast_glow", muzzle);
+  safeParticle(dimension, "dbz:ki_blast_core", muzzle);
+
   let finished = false;
 
-  for (let step = 1; step <= 15; step++) {
+  for (let step = 1; step <= 16; step++) {
     system.runTimeout(() => {
       if (finished) return;
-      try {
-        const location = point(origin, direction, step * 2.0);
-        safeParticle(dimension, "dbz:ki_blast_particle", location);
 
-        const hit = dimension.getEntities({ location, maxDistance: 1.25 })
-          .find(entity => entity.id !== player.id && entity.typeId !== "minecraft:item");
+      try {
+        const distance = 1.4 + step * 1.85;
+        const location = point(origin, direction, distance);
+
+        // Bright center + larger energy halo.
+        safeParticle(dimension, "dbz:ki_blast_glow", location);
+        safeParticle(dimension, "dbz:ki_blast_core", location);
+
+        // Afterimage behind the projectile creates readable motion on mobile.
+        if (step > 1) {
+          const trailA = point(origin, direction, distance - 0.75);
+          const trailB = point(origin, direction, distance - 1.35);
+          safeParticle(dimension, "dbz:ki_blast_trail", trailA);
+          safeParticle(dimension, "dbz:ki_blast_trail", trailB);
+        }
+
+        const hit = dimension.getEntities({ location, maxDistance: 1.20 })
+          .find(entity =>
+            entity.id !== player.id &&
+            entity.typeId !== "minecraft:item" &&
+            entity.typeId !== "minecraft:xp_orb"
+          );
 
         if (hit) {
           finished = true;
-          hit.applyDamage(8, { damagingEntity: player });
-          hit.applyImpulse({
-            x: direction.x * 0.7,
-            y: 0.14,
-            z: direction.z * 0.7
-          });
-          safeParticle(dimension, "dbz:ki_blast_particle", location);
+
+          try {
+            hit.applyDamage(8, { damagingEntity: player });
+            hit.applyImpulse({
+              x: direction.x * 0.75,
+              y: 0.16,
+              z: direction.z * 0.75
+            });
+          } catch {}
+
+          // Compact impact burst around the contact point.
+          const burstOffsets = [
+            [0, 0, 0],
+            [0.28, 0, 0],
+            [-0.28, 0, 0],
+            [0, 0.28, 0],
+            [0, -0.20, 0],
+            [0, 0, 0.28],
+            [0, 0, -0.28]
+          ];
+          for (const [x, y, z] of burstOffsets) {
+            safeParticle(dimension, "dbz:ki_blast_impact", {
+              x: location.x + x,
+              y: location.y + y,
+              z: location.z + z
+            });
+          }
         }
       } catch {
         finished = true;
