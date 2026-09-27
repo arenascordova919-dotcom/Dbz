@@ -1,11 +1,5 @@
 {
-  "resource_pack_name": "dbz",
-  "texture_data": {
-    "ki_blast": {
-      "textures": "textures/items/ki_blast"
-    },
-    "dbz_menu": {
-      "textures": "textures/items/dbz_menu"
-    }
-  }
+  "resource_pack_name": "dragon_breakers",
+  "texture_name": "atlas.items",
+  "texture_data": {}
 }
