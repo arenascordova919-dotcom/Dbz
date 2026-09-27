@@ -1,6 +1,6 @@
 import { EquipmentSlot, system, world } from "@minecraft/server";
 import { CONFIG } from "./config.js";
-import { clampResource, getNumber } from "./playerData.js";
+import { clampResource, getNumber, getString } from "./playerData.js";
 
 const chargingState = new Map();
 
@@ -17,32 +17,33 @@ function isHoldingLauncher(player) {
   }
 }
 
+function styleKey(player) {
+  const style = getString(player, "auraStyle").toLowerCase();
+  if (["blue","gold","violet","green"].includes(style)) return style;
+  return "blue";
+}
+
 function spawnAura(player, pulse) {
   try {
     const p = player.location;
     const d = player.dimension;
-    const sway = Math.sin(pulse * 0.45) * 0.08;
+    const style = styleKey(player);
+    const flame = `dbz:aura_${style}_flame`;
+    const spark = `dbz:aura_${style}_spark`;
+    const sway = Math.sin(pulse * 0.38) * 0.10;
 
-    // Slim vertical energy streaks around the silhouette.
-    const streaks = [
-      [-0.48, 0.35, 0.00], [0.48, 0.35, 0.00],
-      [-0.42, 0.95, 0.05], [0.42, 0.95, -0.05],
-      [-0.30, 1.48, 0.00], [0.30, 1.48, 0.00],
-      [0.00, 1.90, 0.00]
-    ];
+    // Two tall flame sheets hug the player instead of surrounding them with balls.
+    safeParticle(d, flame, { x: p.x - 0.23 + sway, y: p.y + 0.88, z: p.z });
+    safeParticle(d, flame, { x: p.x + 0.23 - sway, y: p.y + 0.88, z: p.z });
 
-    for (let i = 0; i < streaks.length; i++) {
-      const [x, y, z] = streaks[i];
-      safeParticle(d, i < 4 ? "dbz:aura_body" : "dbz:aura_rise", {
-        x: p.x + x + (i % 2 === 0 ? sway : -sway),
-        y: p.y + y,
-        z: p.z + z
-      });
-    }
+    // Rising shoulder/head streaks.
+    safeParticle(d, spark, { x: p.x - 0.34, y: p.y + 1.20, z: p.z });
+    safeParticle(d, spark, { x: p.x + 0.34, y: p.y + 1.20, z: p.z });
+    if (pulse % 2 === 0) safeParticle(d, spark, { x: p.x, y: p.y + 1.72, z: p.z });
 
-    // A short pulse around the whole body, not a stack of orbs.
+    // Short extra flare while charging for a stronger DBC-like pulse.
     if (pulse % 10 === 0) {
-      safeParticle(d, "dbz:aura_burst", { x: p.x, y: p.y + 0.92, z: p.z });
+      safeParticle(d, flame, { x: p.x, y: p.y + 0.90, z: p.z + 0.08 });
     }
   } catch {}
 }
