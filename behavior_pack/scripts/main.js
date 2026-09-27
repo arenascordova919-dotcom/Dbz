@@ -5,7 +5,7 @@ import { registerCombat } from "./combat.js";
 import { ensureCharacterCreation, openMainMenu } from "./menu.js";
 import { cycleTechniqueSlot, useSelectedTechnique } from "./controls.js";
 import { startHudBridge } from "./hudBridge.js";
-import { applyRaceAppearance } from "./appearance.js";
+import { cleanupLegacyRaceAppearance } from "./appearance.js";
 import { startChargingSystem } from "./charging.js";
 
 function findEmptyInventorySlot(inventory, avoid = new Set()) {
@@ -64,9 +64,7 @@ function ensureSystemSlots(player) {
 function preparePlayer(player) {
   initializePlayer(player);
   ensureSystemSlots(player);
-  if (getNumber(player, "characterCreated") >= 1) {
-    system.run(() => applyRaceAppearance(player));
-  }
+  system.run(() => cleanupLegacyRaceAppearance(player));
   system.runTimeout(() => ensureCharacterCreation(player), 12);
 
   try {
@@ -117,5 +115,5 @@ system.run(() => {
     }
   }, 100);
 
-  console.warn("[Dragon Breakers] v0.6.2 loaded.");
+  console.warn("[Dragon Breakers] v0.6.3 loaded.");
 });
