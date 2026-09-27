@@ -1,4 +1,4 @@
-import { HudElement, HudVisibility, system, world } from "@minecraft/server";
+import { HudElement, HudVisibility, ItemStack, system, world } from "@minecraft/server";
 import { initializePlayer } from "./playerData.js";
 import { startResourceRegeneration } from "./resources.js";
 import { registerCombat } from "./combat.js";
