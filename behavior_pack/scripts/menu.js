@@ -62,27 +62,33 @@ function applyRaceStats(player, race) {
 
 export async function ensureCharacterCreation(player) {
   if (!player) return;
-  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 2) return ensureRaceCustomization(player);
+  if (getNumber(player, "characterCreated") >= 1 && getNumber(player, "creationRevision") >= 2) return ensureAppearanceSetup(player);
   if (creationOpen.has(player.id)) return;
 
   creationOpen.add(player.id);
   let retry = false;
-  let index = Math.max(0, RACES.findIndex(r => r.id === getString(player, "race")));
+  let confirmed = false;
+  const originalRace = getString(player, "race");
+  let index = Math.max(0, RACES.findIndex(r => r.id === originalRace));
   if (index < 0) index = 0;
 
   try {
     while (getNumber(player, "creationRevision") < 2) {
       const race = RACES[index];
+
+      // Preview the race live in the custom player renderer without applying stats yet.
+      setString(player, "race", race.id);
+
       const form = new ActionFormData()
-        .title("§lDRAGON BREAKERS")
-        .header("§6CHARACTER CREATION")
+        .title("dbz_race_select")
         .label(
-          `${race.color}§l${race.id.toUpperCase()}§r  §7•  §fATK §6${race.atk}  §fDEF §e${race.def}  §fSPD §b${race.spd}  §fREG §a${race.regen}\n` +
-          `§7${race.description}`
+          `§6§l${race.id.toUpperCase()}§r\n\n` +
+          `§7${race.description}\n\n` +
+          `§fATK §6${race.atk}   §fDEF §e${race.def}   §fSPD §b${race.spd}   §fREG §a${race.regen}`
         )
-        .button("§6◀  PREVIOUS")
-        .button(`§a✔  SELECT ${race.id.toUpperCase()}`, race.icon)
-        .button("§6NEXT  ▶");
+        .button("§6◀")
+        .button(`§aSELECT ${race.id.toUpperCase()}`, race.icon)
+        .button("§6▶");
 
       const result = await form.show(player);
       if (result.canceled || result.selection === undefined) {
@@ -105,6 +111,7 @@ export async function ensureCharacterCreation(player) {
         applyRaceStats(player, race);
         setNumber(player, "characterCreated", 1);
         setNumber(player, "creationRevision", 2);
+        confirmed = true;
         system.runTimeout(() => ensureAppearanceSetup(player), 2);
         break;
       }
@@ -113,6 +120,7 @@ export async function ensureCharacterCreation(player) {
     console.warn("[Dragon Breakers] Character creation form failed: " + error);
     retry = true;
   } finally {
+    if (!confirmed && getNumber(player, "creationRevision") < 2) setString(player, "race", originalRace);
     creationOpen.delete(player.id);
   }
 
@@ -126,11 +134,21 @@ export async function ensureAppearanceSetup(player) {
   if (appearanceOpen.has(player.id)) return;
 
   appearanceOpen.add(player.id);
-  let bodyType = getString(player, "bodyType");
-  let skinTone = getString(player, "skinTone");
-  let hairStyle = getString(player, "hairStyle");
-  let hairColor = getString(player, "hairColor");
-  let eyeStyle = getString(player, "eyeStyle");
+
+  const original = {
+    bodyType: getString(player, "bodyType"),
+    skinTone: getString(player, "skinTone"),
+    hairStyle: getString(player, "hairStyle"),
+    hairColor: getString(player, "hairColor"),
+    eyeStyle: getString(player, "eyeStyle")
+  };
+
+  let bodyType = original.bodyType;
+  let skinTone = original.skinTone;
+  let hairStyle = original.hairStyle;
+  let hairColor = original.hairColor;
+  let eyeStyle = original.eyeStyle;
+  let confirmed = false;
 
   if (!BODY_TYPES.includes(bodyType)) bodyType = bodyType === "Type 2" ? "Muscular" : bodyType === "Type 3" ? "Slim" : "Normal";
   if (!SKIN_TONES.includes(skinTone)) skinTone = "Default";
@@ -138,61 +156,74 @@ export async function ensureAppearanceSetup(player) {
   if (!HAIR_COLORS.includes(hairColor)) hairColor = "Black";
   if (!EYE_STYLES.includes(eyeStyle)) eyeStyle = "Eyes 1";
 
+  const cycle = (array, value, direction) => {
+    const i = Math.max(0, array.indexOf(value));
+    return array[(i + direction + array.length) % array.length];
+  };
+
   try {
     while (getNumber(player, "appearanceRevision") < 2) {
+      // These preview values are intentionally written before the form opens so live_player_renderer updates immediately.
+      setString(player, "bodyType", bodyType);
+      setString(player, "skinTone", skinTone);
+      setString(player, "hairStyle", hairStyle);
+      setString(player, "hairColor", hairColor);
+      setString(player, "eyeStyle", eyeStyle);
+
       const race = getString(player, "race");
+      const hairAllowed = race === "Saiyan" || race === "Earthling";
+
       const form = new ActionFormData()
-        .title("§lDRAGON BREAKERS")
-        .header("§6APPEARANCE")
+        .title("dbz_appearance")
         .label(
-          `§fRace: §e${race}\n` +
-          `§fBody: §6${bodyType}   §fSkin: §6${skinTone}\n` +
-          `§fHair: §6${hairStyle} / ${hairColor}   §fEyes: §6${eyeStyle}\n\n` +
-          "§7These choices now drive your live Dragon Breakers fighter model. Saiyans gain a tail; Namekians and Arcosians use race-specific geometry."
+          `§6§l${race.toUpperCase()} APPEARANCE§r\n\n` +
+          `§fBody   §6${bodyType}\n` +
+          `§fSkin   §6${skinTone}\n` +
+          `§fHair   §6${hairAllowed ? hairStyle + " / " + hairColor : "Race Specific"}\n` +
+          `§fEyes   §6${eyeStyle}\n\n` +
+          "§7Use the arrows to preview your fighter, then confirm."
         )
-        .button(`§6Body Type • ${bodyType}`, "textures/items/race_saiyan_icon")
-        .button(`§6Skin Tone • ${skinTone}`, "textures/items/race_earthling_icon")
-        .button(`§6Hair Style • ${hairStyle}`, "textures/items/kamehameha")
-        .button(`§6Hair Color • ${hairColor}`, "textures/items/ki_blast")
-        .button(`§6Eyes • ${eyeStyle}`, "textures/items/spirit_bomb")
-        .button("§a✔  CONTINUE");
+        .button(`§6◀ ${bodyType}`)
+        .button(`§6${bodyType} ▶`)
+        .button(`§6◀ ${skinTone}`)
+        .button(`§6${skinTone} ▶`)
+        .button(`§6◀ ${hairAllowed ? hairStyle : "N/A"}`)
+        .button(`§6${hairAllowed ? hairStyle : "N/A"} ▶`)
+        .button(`§6◀ ${hairAllowed ? hairColor : "N/A"}`)
+        .button(`§6${hairAllowed ? hairColor : "N/A"} ▶`)
+        .button(`§6◀ ${eyeStyle}`)
+        .button(`§6${eyeStyle} ▶`)
+        .button("§a✔  ACCEPT");
 
       const result = await form.show(player);
       if (result.canceled || result.selection === undefined) break;
 
-      if (result.selection === 0) {
-        bodyType = BODY_TYPES[(BODY_TYPES.indexOf(bodyType) + 1) % BODY_TYPES.length];
-        continue;
-      }
-      if (result.selection === 1) {
-        skinTone = SKIN_TONES[(SKIN_TONES.indexOf(skinTone) + 1) % SKIN_TONES.length];
-        continue;
-      }
-      if (result.selection === 2) {
-        hairStyle = HAIR_STYLES[(HAIR_STYLES.indexOf(hairStyle) + 1) % HAIR_STYLES.length];
-        continue;
-      }
-      if (result.selection === 3) {
-        hairColor = HAIR_COLORS[(HAIR_COLORS.indexOf(hairColor) + 1) % HAIR_COLORS.length];
-        continue;
-      }
-      if (result.selection === 4) {
-        eyeStyle = EYE_STYLES[(EYE_STYLES.indexOf(eyeStyle) + 1) % EYE_STYLES.length];
-        continue;
-      }
-      if (result.selection === 5) {
-        setString(player, "bodyType", bodyType);
-        setString(player, "skinTone", skinTone);
-        setString(player, "hairStyle", hairStyle);
-        setString(player, "hairColor", hairColor);
-        setString(player, "eyeStyle", eyeStyle);
+      if (result.selection === 0) bodyType = cycle(BODY_TYPES, bodyType, -1);
+      else if (result.selection === 1) bodyType = cycle(BODY_TYPES, bodyType, 1);
+      else if (result.selection === 2) skinTone = cycle(SKIN_TONES, skinTone, -1);
+      else if (result.selection === 3) skinTone = cycle(SKIN_TONES, skinTone, 1);
+      else if (result.selection === 4 && hairAllowed) hairStyle = cycle(HAIR_STYLES, hairStyle, -1);
+      else if (result.selection === 5 && hairAllowed) hairStyle = cycle(HAIR_STYLES, hairStyle, 1);
+      else if (result.selection === 6 && hairAllowed) hairColor = cycle(HAIR_COLORS, hairColor, -1);
+      else if (result.selection === 7 && hairAllowed) hairColor = cycle(HAIR_COLORS, hairColor, 1);
+      else if (result.selection === 8) eyeStyle = cycle(EYE_STYLES, eyeStyle, -1);
+      else if (result.selection === 9) eyeStyle = cycle(EYE_STYLES, eyeStyle, 1);
+      else if (result.selection === 10) {
         setNumber(player, "appearanceRevision", 2);
+        confirmed = true;
         break;
       }
     }
   } catch (error) {
     console.warn("[Dragon Breakers] Appearance setup failed: " + error);
   } finally {
+    if (!confirmed && getNumber(player, "appearanceRevision") < 2) {
+      setString(player, "bodyType", original.bodyType);
+      setString(player, "skinTone", original.skinTone);
+      setString(player, "hairStyle", original.hairStyle);
+      setString(player, "hairColor", original.hairColor);
+      setString(player, "eyeStyle", original.eyeStyle);
+    }
     appearanceOpen.delete(player.id);
   }
 
