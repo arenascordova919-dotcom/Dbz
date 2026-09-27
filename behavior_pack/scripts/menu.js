@@ -70,7 +70,7 @@ async function specials(player) {
     .label(`§7Selected slot: §6${loadout.selectedSlot}\n§f1 §b${loadout.slots[0]}\n§f2 §e${loadout.slots[1]}\n§f3 §9${loadout.slots[2]}\n§f4 §8${loadout.slots[3]}`)
     .button("§6Slot 1 • Kamehameha", "textures/items/kamehameha")
     .button("§6Slot 2 • Ki Blast", "textures/items/ki_blast")
-    .button("§6Slot 3 • Spirit Bomb", "textures/items/ki_blast")
+    .button("§6Slot 3 • Spirit Bomb", "textures/items/spirit_bomb")
     .button("§6Slot 4 • Empty", "textures/items/dbz_menu")
     .button("§8Back", "textures/items/dbz_menu");
 
