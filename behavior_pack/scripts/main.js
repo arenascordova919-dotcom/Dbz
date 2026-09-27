@@ -73,60 +73,61 @@ function selectedSystemItem(player) {
 }
 
 
-function registerMobileControls() {
-  // Selecting slot 9 opens the menu immediately, so mobile players do not
-  // depend on custom-item use behavior.
-  try {
-    world.afterEvents.playerHotbarSelectedSlotChange?.subscribe((event) => {
-      const player = event.player;
-      const typeId = event.itemStack?.typeId;
+const menuSelectLatch = new Map();
+const jumpLatch = new Map();
 
-      if (typeId === "dbz:menu") {
-        system.run(() => openMainMenu(player));
-        return;
-      }
+function startSystemControlPolling() {
+  system.runInterval(() => {
+    for (const player of world.getAllPlayers()) {
+      const selected = selectedSystemItem(player);
 
-      if (typeId === "dbz:technique_launcher") {
-        try {
-          player.onScreenDisplay.setActionBar("§bLauncher §7• §fJump = Fire §7• §fSneak = Charge §7• §fSneak+Jump = Cycle");
-        } catch {}
-      }
-    });
-  } catch (error) {
-    console.warn("[Dragon Breakers] Hotbar control registration unavailable: " + error);
-  }
-
-  // Jump is a reliable button on touch/controller/keyboard. With the
-  // launcher selected it becomes a fallback fire control.
-  try {
-    world.afterEvents.playerButtonInput?.subscribe((event) => {
-      if (event.button !== "Jump" || event.newButtonState !== "Pressed") return;
-
-      const player = event.player;
-      if (selectedSystemItem(player) !== "dbz:technique_launcher") return;
-      if (getNumber(player, "characterCreated") < 1) {
-        system.run(() => ensureCharacterSetup(player));
-        return;
-      }
-
-      system.run(() => {
-        try {
-          if (player.isSneaking) {
-            const result = cycleTechniqueSlot(player);
-            player.onScreenDisplay.setActionBar(`§6[${result.slot}] §f${result.name} §7selected`);
-          } else {
-            useSelectedTechnique(player);
-          }
-        } catch (error) {
-          console.warn("[Dragon Breakers] Mobile launcher control failed: " + error);
+      // Slot 9 opens the menu once per selection. Switching away resets it.
+      if (selected === "dbz:menu") {
+        if (!menuSelectLatch.get(player.id)) {
+          menuSelectLatch.set(player.id, true);
+          system.run(() => {
+            try { openMainMenu(player); } catch (error) {
+              console.warn("[Dragon Breakers] Menu open failed: " + error);
+            }
+          });
         }
-      });
-    });
-  } catch (error) {
-    console.warn("[Dragon Breakers] Button input control registration unavailable: " + error);
-  }
-}
+      } else {
+        menuSelectLatch.delete(player.id);
+      }
 
+      // Slot 8 launcher fallback that works on touch/controller/keyboard:
+      // Jump = fire, Sneak + Jump = cycle. Sneak alone still charges Ki.
+      let jumping = false;
+      try { jumping = !!player.isJumping; } catch {}
+
+      if (selected === "dbz:technique_launcher" && jumping) {
+        if (!jumpLatch.get(player.id)) {
+          jumpLatch.set(player.id, true);
+
+          if (getNumber(player, "characterCreated") < 1) {
+            system.run(() => ensureCharacterSetup(player));
+            continue;
+          }
+
+          system.run(() => {
+            try {
+              if (player.isSneaking) {
+                const result = cycleTechniqueSlot(player);
+                player.onScreenDisplay.setActionBar(`§6[${result.slot}] §f${result.name} §7selected`);
+              } else {
+                useSelectedTechnique(player);
+              }
+            } catch (error) {
+              console.warn("[Dragon Breakers] Launcher fallback failed: " + error);
+            }
+          });
+        }
+      } else {
+        jumpLatch.delete(player.id);
+      }
+    }
+  }, 1);
+}
 function preparePlayer(player) {
   initializePlayer(player);
   ensureSystemSlots(player);
@@ -175,7 +176,7 @@ system.run(() => {
   startChargingSystem();
   registerCombat();
   registerProgression();
-  registerMobileControls();
+  startSystemControlPolling();
 
   system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
