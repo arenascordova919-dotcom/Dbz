@@ -120,5 +120,5 @@ system.run(() => {
     }
   }, 100);
 
-  console.warn("[Dragon Breakers] v0.7.0 Player Renderer Rebuild loaded.");
+  console.warn("[Dragon Breakers] v0.7.1 Render + Visual Fix loaded.");
 });
