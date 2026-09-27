@@ -17,19 +17,14 @@
             8
           ],
           "size": [
-            38,
-            38
+            36,
+            36
           ],
           "controls": [
             {
               "gold_border": {
                 "type": "image",
-                "texture": "textures/ui/White",
-                "color": [
-                  1,
-                  0.68,
-                  0.08
-                ],
+                "texture": "textures/ui/dragon_breakers/db_hud_panel",
                 "size": [
                   "100%",
                   "100%"
@@ -38,32 +33,16 @@
               }
             },
             {
-              "black_inner": {
+              "emblem": {
                 "type": "image",
-                "texture": "textures/ui/Black",
-                "alpha": 0.96,
+                "texture": "textures/items/dbz_menu",
                 "size": [
-                  "100%-4px",
-                  "100%-4px"
+                  28,
+                  28
                 ],
+                "anchor_from": "center",
+                "anchor_to": "center",
                 "layer": 2
-              }
-            },
-            {
-              "player_portrait": {
-                "type": "custom",
-                "renderer": "hud_player_renderer",
-                "size": [
-                  30,
-                  34
-                ],
-                "layer": 3,
-                "anchor_from": "bottom_middle",
-                "anchor_to": "bottom_middle",
-                "offset": [
-                  0,
-                  1
-                ]
               }
             }
           ],
@@ -78,11 +57,11 @@
           "anchor_to": "left_middle",
           "offset": [
             8,
-            10
+            8
           ],
           "size": [
-            104,
-            88
+            96,
+            80
           ],
           "controls": [
             {
@@ -90,14 +69,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  22
+                  20
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
-                      "texture": "textures/ui/Black",
-                      "alpha": 0.52,
+                      "texture": "textures/ui/dragon_breakers/db_slot_panel",
+                      "alpha": 0.88,
                       "size": [
                         "100%",
                         "100%"
@@ -110,8 +89,8 @@
                       "texture": "textures/items/kamehameha",
                       "alpha": 1,
                       "size": [
-                        18,
-                        18
+                        16,
+                        16
                       ],
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
@@ -129,7 +108,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        24,
+                        21,
                         0
                       ],
                       "shadow": true
@@ -143,14 +122,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  22
+                  20
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
-                      "texture": "textures/ui/Black",
-                      "alpha": 0.52,
+                      "texture": "textures/ui/dragon_breakers/db_slot_panel",
+                      "alpha": 0.88,
                       "size": [
                         "100%",
                         "100%"
@@ -163,8 +142,8 @@
                       "texture": "textures/items/ki_blast",
                       "alpha": 1,
                       "size": [
-                        18,
-                        18
+                        16,
+                        16
                       ],
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
@@ -182,7 +161,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        24,
+                        21,
                         0
                       ],
                       "shadow": true
@@ -196,14 +175,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  22
+                  20
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
-                      "texture": "textures/ui/Black",
-                      "alpha": 0.52,
+                      "texture": "textures/ui/dragon_breakers/db_slot_panel",
+                      "alpha": 0.88,
                       "size": [
                         "100%",
                         "100%"
@@ -216,8 +195,8 @@
                       "texture": "textures/items/spirit_bomb",
                       "alpha": 1,
                       "size": [
-                        18,
-                        18
+                        16,
+                        16
                       ],
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
@@ -235,7 +214,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        24,
+                        21,
                         0
                       ],
                       "shadow": true
@@ -249,14 +228,14 @@
                 "type": "panel",
                 "size": [
                   "100%",
-                  22
+                  20
                 ],
                 "controls": [
                   {
                     "bg": {
                       "type": "image",
-                      "texture": "textures/ui/Black",
-                      "alpha": 0.52,
+                      "texture": "textures/ui/dragon_breakers/db_slot_panel",
+                      "alpha": 0.88,
                       "size": [
                         "100%",
                         "100%"
@@ -271,7 +250,7 @@
                       "anchor_from": "left_middle",
                       "anchor_to": "left_middle",
                       "offset": [
-                        24,
+                        21,
                         0
                       ],
                       "shadow": true
@@ -317,30 +296,14 @@
     ],
     "controls": [
       {
-        "gold_outer": {
+        "panel": {
           "type": "image",
-          "texture": "textures/ui/White",
-          "color": [
-            1,
-            0.68,
-            0.08
-          ],
-          "alpha": 0.95,
+          "texture": "textures/ui/dragon_breakers/db_panel",
           "size": [
             "100%",
             "100%"
-          ]
-        }
-      },
-      {
-        "black_inner": {
-          "type": "image",
-          "texture": "textures/ui/Black",
-          "alpha": 0.96,
-          "size": [
-            "100%-4px",
-            "100%-4px"
-          ]
+          ],
+          "alpha": 0.98
         }
       }
     ]
