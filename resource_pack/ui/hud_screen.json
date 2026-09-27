@@ -9,10 +9,10 @@
       "100%c + 8px"
     ],
     "offset": [
-      50,
-      8
+      47,
+      7
     ],
-    "texture": "textures/ui/Black",
+    "texture": "textures/ui/dragon_breakers/db_hud_panel",
     "alpha": "@hud.anim_actionbar_text_background_alpha_out",
     "controls": [
       {
@@ -28,6 +28,11 @@
           "alpha": "@hud.anim_actionbar_text_alpha_out"
         }
       }
+    ],
+    "color": [
+      1,
+      1,
+      1
     ]
   },
   "root_panel": {
