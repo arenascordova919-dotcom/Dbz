@@ -39,12 +39,7 @@
         "dbz_arcosian_3": "textures/entity/dragon_breakers/arcosian_3",
         "dbz_eyes_0": "textures/entity/dragon_breakers/eyes_0",
         "dbz_eyes_1": "textures/entity/dragon_breakers/eyes_1",
-        "dbz_eyes_2": "textures/entity/dragon_breakers/eyes_2",
-        "dbz_hair_black": "textures/entity/dragon_breakers/hair_black",
-        "dbz_hair_brown": "textures/entity/dragon_breakers/hair_brown",
-        "dbz_hair_gold": "textures/entity/dragon_breakers/hair_gold",
-        "dbz_hair_blue": "textures/entity/dragon_breakers/hair_blue",
-        "dbz_hair_white": "textures/entity/dragon_breakers/hair_white"
+        "dbz_eyes_2": "textures/entity/dragon_breakers/eyes_2"
       },
       "geometry": {
         "default": "geometry.humanoid.custom",
