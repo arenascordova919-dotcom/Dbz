@@ -8,6 +8,62 @@
     ],
     "controls": [
       {
+        "player_portrait_frame": {
+          "type": "panel",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [
+            8,
+            8
+          ],
+          "size": [
+            44,
+            44
+          ],
+          "controls": [
+            {
+              "gold_border": {
+                "type": "image",
+                "texture": "textures/ui/White",
+                "color": [
+                  1,
+                  0.68,
+                  0.08
+                ],
+                "size": [
+                  "100%",
+                  "100%"
+                ],
+                "layer": 1
+              }
+            },
+            {
+              "black_inner": {
+                "type": "image",
+                "texture": "textures/ui/Black",
+                "alpha": 0.96,
+                "size": [
+                  "100%-4px",
+                  "100%-4px"
+                ],
+                "layer": 2
+              }
+            },
+            {
+              "player_portrait": {
+                "type": "custom",
+                "renderer": "hud_player_renderer",
+                "size": [
+                  36,
+                  36
+                ],
+                "layer": 3
+              }
+            }
+          ]
+        }
+      },
+      {
         "technique_rail": {
           "type": "stack_panel",
           "orientation": "vertical",
