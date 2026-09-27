@@ -1,7 +1,7 @@
 import { CONFIG } from "./config.js";
 
 const DEFAULTS = Object.freeze({
-  race: "Earthling",
+  race: "Unselected",
   level: 1,
   xp: 0,
   tp: 0,
