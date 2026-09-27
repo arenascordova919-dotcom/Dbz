@@ -3,7 +3,7 @@ name: Dragon Breakers Validate and Build
 on:
   push:
     branches:
-      - build/v0.7.1-render-visual-fix
+      - build/v0.7.2-mobile-particle-fix
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
             node --check "$file"
           done
 
-      - name: Validate Dragon Breakers v0.7.1
+      - name: Validate Dragon Breakers v0.7.2
         run: |
           python - <<'PY'
           import json, pathlib, uuid
@@ -53,9 +53,9 @@ jobs:
 
           bp = json.load(open(BP / "manifest.json", encoding="utf-8"))
           rp = json.load(open(RP / "manifest.json", encoding="utf-8"))
-          expected = [0, 7, 1]
+          expected = [0, 7, 2]
           if bp["header"]["version"] != expected or rp["header"]["version"] != expected:
-              raise SystemExit(f"Expected v0.7.1, got BP={bp['header']['version']} RP={rp['header']['version']}")
+              raise SystemExit(f"Expected v0.7.2, got BP={bp['header']['version']} RP={rp['header']['version']}")
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
 
@@ -101,7 +101,7 @@ jobs:
           ]
           for path in required:
               if not path.exists():
-                  raise SystemExit(f"Missing v0.7.1 renderer/creator file: {path}")
+                  raise SystemExit(f"Missing v0.7.2 renderer/creator file: {path}")
 
           # BP player must preserve vanilla player and expose synced DBZ properties.
           bp_player = json.load(open(BP / "entities/player.json", encoding="utf-8"))
@@ -169,7 +169,20 @@ jobs:
               RP / "particles/aura_ring.particle.json",
           ]:
               if not visual.exists():
-                  raise SystemExit(f"Missing v0.7.1 visual asset: {visual}")
+                  raise SystemExit(f"Missing v0.7.2 visual asset: {visual}")
+
+          # Mobile particle compatibility: no custom direction subsection on beam/trail.
+          for particle_name in ("kamehameha_beam.particle.json", "ki_blast_trail.particle.json"):
+              pdata = json.load(open(RP / "particles" / particle_name, encoding="utf-8"))
+              billboard = pdata["particle_effect"]["components"]["minecraft:particle_appearance_billboard"]
+              if "direction" in billboard:
+                  raise SystemExit(f"Unsafe particle direction subsection returned: {particle_name}")
+              if billboard.get("facing_camera_mode") != "lookat_xyz":
+                  raise SystemExit(f"Expected mobile-safe lookat_xyz billboard: {particle_name}")
+
+          player_client_text = (RP / "entity/player.entity.json").read_text(encoding="utf-8")
+          if "variable.melee_spear_equipped = 0.0;" not in player_client_text:
+              raise SystemExit("Missing melee_spear_equipped safe initialization")
 
           # Custom UI routing + live renderer.
           ui_defs = json.load(open(RP / "ui/_ui_defs.json", encoding="utf-8"))
@@ -215,14 +228,14 @@ jobs:
                   if not path.exists():
                       raise SystemExit(f"Particle {particle_path} references missing texture: {path}")
 
-          print("Dragon Breakers v0.7.1 validation passed")
+          print("Dragon Breakers v0.7.2 validation passed")
           PY
 
       - name: Build mcaddon
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.7.1_PLAYER_RENDERER_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.7.2_PLAYER_RENDERER_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -241,7 +254,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.7.1_PLAYER_RENDERER_TEST
-          path: Dragon_Breakers_v0.7.1_PLAYER_RENDERER_TEST.mcaddon
+          name: Dragon_Breakers_v0.7.2_PLAYER_RENDERER_TEST
+          path: Dragon_Breakers_v0.7.2_PLAYER_RENDERER_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
