@@ -1,0 +1,112 @@
+name: Dragon Breakers Validate and Build
+
+on:
+  push:
+    branches:
+      - build/dragon-breakers-ui-v05
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          set -e
+          for file in behavior_pack/scripts/*.js; do
+            node --check "$file"
+          done
+
+      - name: Validate JSON, UUIDs, versions, and texture references
+        run: |
+          python - <<'PY'
+          import json, pathlib, uuid, sys
+
+          roots = [pathlib.Path("behavior_pack"), pathlib.Path("resource_pack")]
+          for root in roots:
+              for path in root.rglob("*.json"):
+                  try:
+                      with path.open(encoding="utf-8") as f:
+                          json.load(f)
+                  except Exception as exc:
+                      raise SystemExit(f"Invalid JSON: {path}: {exc}")
+
+          bp = json.load(open("behavior_pack/manifest.json", encoding="utf-8"))
+          rp = json.load(open("resource_pack/manifest.json", encoding="utf-8"))
+
+          if bp["header"]["version"] != rp["header"]["version"]:
+              raise SystemExit("BP/RP version mismatch")
+          if bp["header"]["version"] != [0, 5, 1]:
+              raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
+
+          for manifest in (bp, rp):
+              uuid.UUID(manifest["header"]["uuid"])
+              for module in manifest.get("modules", []):
+                  uuid.UUID(module["uuid"])
+              for dependency in manifest.get("dependencies", []):
+                  if "uuid" in dependency:
+                      uuid.UUID(dependency["uuid"])
+
+          if not any(d.get("uuid") == rp["header"]["uuid"] for d in bp.get("dependencies", [])):
+              raise SystemExit("BP does not depend on RP")
+          if not any(d.get("uuid") == bp["header"]["uuid"] for d in rp.get("dependencies", [])):
+              raise SystemExit("RP does not depend on BP")
+
+          atlas = json.load(open("resource_pack/textures/item_texture.json", encoding="utf-8"))
+          for key, entry in atlas.get("texture_data", {}).items():
+              texture = entry.get("textures")
+              if not texture:
+                  raise SystemExit(f"Missing texture path for atlas key {key}")
+              path = pathlib.Path("resource_pack") / (texture + ".png")
+              if not path.exists():
+                  raise SystemExit(f"Atlas key {key} references missing file: {path}")
+
+          ui_defs = json.load(open("resource_pack/ui/_ui_defs.json", encoding="utf-8"))
+          for entry in ui_defs.get("ui_defs", []):
+              path = pathlib.Path("resource_pack") / entry
+              if not path.exists():
+                  raise SystemExit(f"_ui_defs references missing file: {path}")
+
+          banned = ("heart_rend", "hunger_rend")
+          for path in pathlib.Path("resource_pack/ui").rglob("*.json"):
+              text = path.read_text(encoding="utf-8")
+              for token in banned:
+                  if token in text:
+                      raise SystemExit(f"Old invalid HUD token {token} found in {path}")
+
+          print("Dragon Breakers validation passed")
+          PY
+
+      - name: Build mcaddon
+        run: |
+          python - <<'PY'
+          import pathlib, zipfile
+          output = pathlib.Path("Dragon_Breakers_v0.5.1_TEST.mcaddon")
+          with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
+              for pack in ("behavior_pack", "resource_pack"):
+                  for path in pathlib.Path(pack).rglob("*"):
+                      if path.is_file():
+                          z.write(path, path.as_posix())
+          with zipfile.ZipFile(output) as z:
+              bad = z.testzip()
+              if bad:
+                  raise SystemExit(f"Corrupt zip member: {bad}")
+              names = set(z.namelist())
+              if "behavior_pack/manifest.json" not in names or "resource_pack/manifest.json" not in names:
+                  raise SystemExit("Missing pack manifests from mcaddon")
+          print(output)
+          PY
+
+      - name: Upload mcaddon artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dragon_Breakers_v0.5.1_TEST
+          path: Dragon_Breakers_v0.5.1_TEST.mcaddon
+          if-no-files-found: error
+          retention-days: 7
