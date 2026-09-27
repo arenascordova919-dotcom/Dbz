@@ -6,23 +6,23 @@
       "bones": {
         "body": {
           "scale": [
-            "q.property('dbz:body_type') == 1 ? 1.12 : q.property('dbz:body_type') == 2 ? 0.90 : 1.0",
+            "variable.dbz_body_type == 1 ? 1.12 : variable.dbz_body_type == 2 ? 0.90 : 1.0",
             "1.0",
-            "q.property('dbz:body_type') == 1 ? 1.08 : q.property('dbz:body_type') == 2 ? 0.92 : 1.0"
+            "variable.dbz_body_type == 1 ? 1.08 : variable.dbz_body_type == 2 ? 0.92 : 1.0"
           ]
         },
         "rightArm": {
           "scale": [
-            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0",
+            "variable.dbz_body_type == 1 ? 1.18 : variable.dbz_body_type == 2 ? 0.88 : 1.0",
             "1.0",
-            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0"
+            "variable.dbz_body_type == 1 ? 1.18 : variable.dbz_body_type == 2 ? 0.88 : 1.0"
           ]
         },
         "leftArm": {
           "scale": [
-            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0",
+            "variable.dbz_body_type == 1 ? 1.18 : variable.dbz_body_type == 2 ? 0.88 : 1.0",
             "1.0",
-            "q.property('dbz:body_type') == 1 ? 1.18 : q.property('dbz:body_type') == 2 ? 0.88 : 1.0"
+            "variable.dbz_body_type == 1 ? 1.18 : variable.dbz_body_type == 2 ? 0.88 : 1.0"
           ]
         }
       }
