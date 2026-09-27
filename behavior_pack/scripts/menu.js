@@ -9,7 +9,7 @@ const RACES = [
 ];
 
 async function chooseRace(player) {
-  const form = new ActionFormData().title("§lRACES").body("Choose your race. This is saved to your character.");
+  const form = new ActionFormData().title("§lDRAGON BREAKERS • RACES").body("Choose your race. This is saved to your character.");
   for (const race of RACES) form.button(race.text);
   const result = await form.show(player);
   if (result.canceled || result.selection === undefined) return;
@@ -20,7 +20,7 @@ async function chooseRace(player) {
 
 async function specials(player) {
   const form = new ActionFormData()
-    .title("§lSPECIALS")
+    .title("§lDRAGON BREAKERS • SPECIALS")
     .body("Technique loadout\n\n§7Slot 1  Kamehameha\nSlot 2  Ki Blast\nSlot 3  Spirit Bomb\nSlot 4  Empty")
     .button("§bKamehameha")
     .button("§eKi Blast")
@@ -33,8 +33,8 @@ export async function openMainMenu(player) {
   const race = getString(player, "race");
   const level = getNumber(player, "level");
   const form = new ActionFormData()
-    .title("§lDRAGON BALL")
-    .body(`§fRace: §e${race}\n§fLevel: §e${level}\n\n§7Character / techniques foundation v0.3`)
+    .title("§lDRAGON BREAKERS")
+    .body(`§fRace: §e${race}\n§fLevel: §e${level}\n\n§7Dragon Breakers v0.5 • Character & Techniques`)
     .button("§6Races")
     .button("§bSpecials")
     .button("§fCharacter")
