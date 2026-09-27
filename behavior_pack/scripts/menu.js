@@ -1,6 +1,5 @@
 import { system } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
-import { applyRaceAppearance } from "./appearance.js";
 import {
   getLoadout,
   getNumber,
@@ -100,7 +99,6 @@ export async function ensureCharacterCreation(player) {
         applyRaceStats(player, race);
         setNumber(player, "characterCreated", 1);
         setNumber(player, "creationRevision", 1);
-        system.run(() => applyRaceAppearance(player));
         player.sendMessage(`§aCharacter created! Race: §f${race.id}`);
         break;
       }
