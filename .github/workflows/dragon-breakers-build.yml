@@ -3,7 +3,7 @@ name: Dragon Breakers Validate and Build
 on:
   push:
     branches:
-      - build/v0.7-player-render-rebuild
+      - build/v0.7.1-render-visual-fix
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
             node --check "$file"
           done
 
-      - name: Validate Dragon Breakers v0.7.0
+      - name: Validate Dragon Breakers v0.7.1
         run: |
           python - <<'PY'
           import json, pathlib, uuid
@@ -53,9 +53,9 @@ jobs:
 
           bp = json.load(open(BP / "manifest.json", encoding="utf-8"))
           rp = json.load(open(RP / "manifest.json", encoding="utf-8"))
-          expected = [0, 7, 0]
+          expected = [0, 7, 1]
           if bp["header"]["version"] != expected or rp["header"]["version"] != expected:
-              raise SystemExit(f"Expected v0.7.0, got BP={bp['header']['version']} RP={rp['header']['version']}")
+              raise SystemExit(f"Expected v0.7.1, got BP={bp['header']['version']} RP={rp['header']['version']}")
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
 
@@ -101,7 +101,7 @@ jobs:
           ]
           for path in required:
               if not path.exists():
-                  raise SystemExit(f"Missing v0.7.0 renderer/creator file: {path}")
+                  raise SystemExit(f"Missing v0.7.1 renderer/creator file: {path}")
 
           # BP player must preserve vanilla player and expose synced DBZ properties.
           bp_player = json.load(open(BP / "entities/player.json", encoding="utf-8"))
@@ -206,14 +206,14 @@ jobs:
                   if not path.exists():
                       raise SystemExit(f"Particle {particle_path} references missing texture: {path}")
 
-          print("Dragon Breakers v0.7.0 validation passed")
+          print("Dragon Breakers v0.7.1 validation passed")
           PY
 
       - name: Build mcaddon
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.7.0_PLAYER_RENDERER_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.7.1_PLAYER_RENDERER_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -232,7 +232,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.7.0_PLAYER_RENDERER_TEST
-          path: Dragon_Breakers_v0.7.0_PLAYER_RENDERER_TEST.mcaddon
+          name: Dragon_Breakers_v0.7.1_PLAYER_RENDERER_TEST
+          path: Dragon_Breakers_v0.7.1_PLAYER_RENDERER_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
