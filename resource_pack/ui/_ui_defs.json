@@ -2,6 +2,9 @@
   "ui_defs": [
     "ui/dragon_breakers_hud.json",
     "ui/hud_screen.json",
-    "ui/server_form.json"
+    "ui/server_form.json",
+    "ui/custom_server_form.json",
+    "ui/race_creator_form.json",
+    "ui/appearance_creator_form.json"
   ]
 }
