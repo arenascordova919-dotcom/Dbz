@@ -49,6 +49,28 @@ jobs:
               except Exception as exc:
                   raise SystemExit(f"Malformed PNG: {png_path}: {exc}")
 
+          # Race appearance items must not be wearable: v0.6.3 removed the helmet/armor workaround.
+          for item_path in pathlib.Path("behavior_pack/items").glob("race_appearance_*.json"):
+              item_data = json.load(open(item_path, encoding="utf-8"))
+              components = item_data.get("minecraft:item", {}).get("components", {})
+              if "minecraft:wearable" in components:
+                  raise SystemExit(f"Race appearance item is still wearable: {item_path}")
+
+          # Race appearance attachables were removed; race identity is no longer faked as armor.
+          legacy_attachables = list(pathlib.Path("resource_pack/attachables").glob("race_appearance_*.json"))
+          if legacy_attachables:
+              raise SystemExit(f"Legacy race armor attachables still exist: {legacy_attachables}")
+
+          # Menu and technique launcher must render with empty geometry in-hand while retaining inventory icons.
+          for hidden_item in ["menu.json", "technique_launcher.json"]:
+              attachable_path = pathlib.Path("resource_pack/attachables") / hidden_item
+              if not attachable_path.exists():
+                  raise SystemExit(f"Missing invisible in-hand attachable: {attachable_path}")
+              attachable = json.load(open(attachable_path, encoding="utf-8"))
+              geometry = attachable.get("minecraft:attachable", {}).get("description", {}).get("geometry", {}).get("default")
+              if geometry != "geometry.dbz.empty":
+                  raise SystemExit(f"System item is not using empty held geometry: {attachable_path}")
+
           # Prevent the exact wearable schema warning seen on-device.
           for item_path in pathlib.Path("behavior_pack/items").glob("race_appearance_*.json"):
               item_data = json.load(open(item_path, encoding="utf-8"))
@@ -61,7 +83,7 @@ jobs:
 
           if bp["header"]["version"] != rp["header"]["version"]:
               raise SystemExit("BP/RP version mismatch")
-          if bp["header"]["version"] != [0, 6, 2]:
+          if bp["header"]["version"] != [0, 6, 3]:
               raise SystemExit(f"Unexpected build version: {bp['header']['version']}")
 
           for manifest in (bp, rp):
@@ -139,7 +161,7 @@ jobs:
                       if not candidate.exists():
                           raise SystemExit(f"UI {ui_path} references missing texture: {candidate}")
 
-          # Required v0.6.2 system assets.
+          # Required v0.6.3 system assets.
           required = [
               "behavior_pack/items/technique_launcher.json",
               "behavior_pack/scripts/appearance.js",
@@ -150,13 +172,14 @@ jobs:
               "resource_pack/particles/spirit_bomb_orb.particle.json",
               "resource_pack/particles/spirit_bomb_impact.particle.json",
               "resource_pack/attachables/technique_launcher.json",
+              "resource_pack/attachables/menu.json",
               "resource_pack/models/entity/empty.geo.json",
               "resource_pack/textures/items/technique_launcher.png",
               "resource_pack/textures/entity/transparent.png",
           ]
           for required_path in required:
               if not pathlib.Path(required_path).exists():
-                  raise SystemExit(f"Missing v0.6.2 required file: {required_path}")
+                  raise SystemExit(f"Missing v0.6.3 required file: {required_path}")
 
           ui_defs = json.load(open("resource_pack/ui/_ui_defs.json", encoding="utf-8"))
           for entry in ui_defs.get("ui_defs", []):
@@ -178,7 +201,7 @@ jobs:
         run: |
           python - <<'PY'
           import pathlib, zipfile
-          output = pathlib.Path("Dragon_Breakers_v0.6.2_TEST.mcaddon")
+          output = pathlib.Path("Dragon_Breakers_v0.6.3_TEST.mcaddon")
           with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
               for pack in ("behavior_pack", "resource_pack"):
                   for path in pathlib.Path(pack).rglob("*"):
@@ -197,7 +220,7 @@ jobs:
       - name: Upload mcaddon artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dragon_Breakers_v0.6.2_TEST
-          path: Dragon_Breakers_v0.6.2_TEST.mcaddon
+          name: Dragon_Breakers_v0.6.3_TEST
+          path: Dragon_Breakers_v0.6.3_TEST.mcaddon
           if-no-files-found: error
           retention-days: 7
