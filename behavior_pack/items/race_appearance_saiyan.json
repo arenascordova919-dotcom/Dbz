@@ -11,8 +11,7 @@
       },
       "minecraft:icon": "race_saiyan_icon",
       "minecraft:wearable": {
-        "slot": "slot.armor.head",
-        "dispensable": false
+        "slot": "slot.armor.head"
       },
       "minecraft:keep_on_death": {}
     }
