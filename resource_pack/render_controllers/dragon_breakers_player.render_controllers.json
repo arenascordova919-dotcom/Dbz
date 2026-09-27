@@ -143,6 +143,26 @@
       "textures": [
         "Texture.dbz_arcosian_features"
       ]
+    },
+    "controller.render.dbz.eyes": {
+      "arrays": {
+        "textures": {
+          "Array.eyes": [
+            "Texture.dbz_eyes_0",
+            "Texture.dbz_eyes_1",
+            "Texture.dbz_eyes_2"
+          ]
+        }
+      },
+      "geometry": "Geometry.dbz_eyes",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Array.eyes[q.property('dbz:eye_style')]"
+      ]
     }
   }
 }
