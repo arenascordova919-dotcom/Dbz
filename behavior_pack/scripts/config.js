@@ -1,5 +1,5 @@
 export const CONFIG = Object.freeze({
-  version: "0.6.4",
+  version: "0.6.5",
   maxKi: 100,
   maxStamina: 100,
   kiRegenPerTick: 0.06,
