@@ -14,7 +14,12 @@ const DEFAULTS = Object.freeze({
   mnd: 5,
   spi: 5,
   ki: CONFIG.maxKi,
-  stamina: CONFIG.maxStamina
+  stamina: CONFIG.maxStamina,
+  selectedSlot: 1,
+  skill1: "Kamehameha",
+  skill2: "Ki Blast",
+  skill3: "Spirit Bomb",
+  skill4: "Empty"
 });
 
 const key = (name) => `dbz:${name}`;
