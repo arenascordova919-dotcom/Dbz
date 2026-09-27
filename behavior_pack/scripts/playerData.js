@@ -23,7 +23,9 @@ const DEFAULTS = Object.freeze({
   characterCreated: 0,
   creationRevision: 0,
   terrainMode: "Low",
-  auraEnabled: 1
+  auraEnabled: 1,
+  focus: "Balanced",
+  auraStyle: "Blue"
 });
 
 const key = (name) => `dbz:${name}`;
@@ -73,4 +75,58 @@ export function getLoadout(player) {
 
 export function selectSkillSlot(player, slot) {
   setNumber(player, "selectedSlot", Math.max(1, Math.min(4, Math.floor(slot))));
+}
+
+
+export function getXpForNextLevel(levelOrPlayer) {
+  const level = typeof levelOrPlayer === "number"
+    ? Math.max(1, Math.floor(levelOrPlayer))
+    : Math.max(1, Math.floor(getNumber(levelOrPlayer, "level")));
+  return Math.floor(100 + 55 * Math.pow(level - 1, 1.22));
+}
+
+export function addXp(player, amount, reason = "") {
+  if (!player || !Number.isFinite(amount) || amount <= 0) return { leveled: false, levels: 0 };
+
+  let level = Math.max(1, Math.floor(getNumber(player, "level")));
+  let xp = Math.max(0, Math.floor(getNumber(player, "xp"))) + Math.floor(amount);
+  let levels = 0;
+
+  while (xp >= getXpForNextLevel(level)) {
+    xp -= getXpForNextLevel(level);
+    level++;
+    levels++;
+    setNumber(player, "tp", getNumber(player, "tp") + 3);
+  }
+
+  setNumber(player, "xp", xp);
+  setNumber(player, "level", level);
+
+  if (levels > 0) {
+    try {
+      player.sendMessage(`§6§lLEVEL UP! §r§fLevel ${level} §7• §e+${levels * 3} TP`);
+    } catch {}
+  } else if (reason) {
+    try { player.sendMessage(`§7+${Math.floor(amount)} XP §8• ${reason}`); } catch {}
+  }
+
+  return { leveled: levels > 0, levels, level, xp };
+}
+
+export function getFocusMultiplier(player, kind) {
+  const focus = getString(player, "focus");
+  if (kind === "damage") {
+    if (focus === "Power") return 1.18;
+    if (focus === "Ki") return 1.08;
+    return 1.0;
+  }
+  if (kind === "cost") {
+    if (focus === "Ki") return 0.82;
+    return 1.0;
+  }
+  if (kind === "cooldown") {
+    if (focus === "Speed") return 0.82;
+    return 1.0;
+  }
+  return 1.0;
 }
