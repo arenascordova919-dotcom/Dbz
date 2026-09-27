@@ -1,0 +1,14 @@
+{
+  "namespace": "server_form",
+  "long_form": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_front",
+        "value": [
+          { "dragon_breakers_header@dragon_breakers.form_header": {} }
+        ]
+      }
+    ]
+  }
+}
