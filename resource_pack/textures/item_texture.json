@@ -1,0 +1,8 @@
+{
+  "resource_pack_name": "dbz",
+  "texture_data": {
+    "ki_blast": {
+      "textures": "textures/items/ki_blast"
+    }
+  }
+}
